@@ -2,6 +2,7 @@
 
 import Link from 'next/link';
 import styles from './index.module.scss';
+import ConnectWallet from '../Wallet';
 
 const Header = () => {
   //   const { data: cartData } = useQuery({
@@ -21,7 +22,7 @@ const Header = () => {
             Create Token
           </Link>
 
-          <button className={styles.loginBtn}>{false ? 'Disconnect' : 'Connect'}</button>
+          <ConnectWallet />
         </div>
       </div>
     </div>

@@ -1,6 +1,7 @@
 'use client';
 
 import '@/styles/globals.scss';
+import { SuiClientProvider, WalletProvider } from '@mysten/dapp-kit';
 
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
@@ -17,7 +18,13 @@ export default function RootLayout({
     <html lang="en">
       <body>
         <RecoilRoot>
-          <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
+          <QueryClientProvider client={queryClient}>
+            <SuiClientProvider>
+              <WalletProvider autoConnect stashedWallet={{ name: 'Sui Coins' }}>
+                {children}
+              </WalletProvider>
+            </SuiClientProvider>
+          </QueryClientProvider>
         </RecoilRoot>
       </body>
     </html>

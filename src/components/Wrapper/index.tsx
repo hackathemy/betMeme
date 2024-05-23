@@ -1,24 +1,19 @@
-"use client";
+'use client';
 
-import Header from "../Header";
-import Loading from "../Common/Loading";
-import styles from "./index.module.scss";
-import { useRouter } from "next/navigation";
+import Header from '../Header';
+import Loading from '../Common/Loading';
+import styles from './index.module.scss';
+import { useCurrentWallet } from '@mysten/dapp-kit';
 
 interface WrapperProps {
   children: JSX.Element;
-  requireAdmin?: boolean;
 }
 
-const Wrapper: React.FC<WrapperProps> = ({ children, requireAdmin }) => {
-  const router = useRouter();
+const Wrapper: React.FC<WrapperProps> = ({ children }) => {
+  const { isConnecting } = useCurrentWallet();
 
-  if (false) {
+  if (isConnecting) {
     return <Loading />;
-  }
-
-  if (false) {
-    router.replace("/");
   }
 
   return (
