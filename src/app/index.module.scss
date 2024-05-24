@@ -3,3 +3,16 @@
   grid-template-columns: repeat(3, 1fr);
   gap: 1rem;
 }
+
+.betCard {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+
+  min-height: 10rem;
+
+  border: 0.1rem solid #000000;
+  border-radius: 0.4rem;
+  padding: 1rem;
+}
