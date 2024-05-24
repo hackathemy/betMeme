@@ -5,11 +5,6 @@ import styles from './index.module.scss';
 import ConnectWallet from '../Wallet';
 
 const Header = () => {
-  //   const { data: cartData } = useQuery({
-  //     queryKey: ['usersCart'],
-  //     queryFn: () => getUserCartList(user?.uid || ''),
-  //   });
-
   return (
     <div className={styles.container}>
       <div className={styles.wrapper}>
