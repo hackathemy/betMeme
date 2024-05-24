@@ -4,9 +4,11 @@ import Wrapper from '@/components/Wrapper';
 import { MouseEvent, useState } from 'react';
 import styles from './index.module.scss';
 import { useCurrentAccount } from '@mysten/dapp-kit';
-// import { TransactionBlock } from '@mysten/sui.js/transactions';
+import { TransactionBlock } from '@mysten/sui.js/transactions';
+import { SUI_TYPE_ARG } from '@mysten/sui.js/utils';
 
 export default function CreateToken() {
+  let coinsMap = new Map();
   const [name, setName] = useState('');
   const [symbol, setSymbol] = useState('');
   const [description, setDescription] = useState('');
@@ -23,8 +25,17 @@ export default function CreateToken() {
 
       if (!currentAccount) return;
 
-      // const txb = new TransactionBlock();
-      console.log('make transaction and install extra library');
+      const txb = new TransactionBlock();
+
+      // txb.setGasPayment(
+      //   coinsMap[SUI_TYPE_ARG].objects.map(
+      //     ({ coinObjectId, digest, version }) => ({
+      //       objectId: coinObjectId,
+      //       digest: digest!,
+      //       version: version!,
+      //     })
+      //   )
+      // );
     } finally {
       setSubmitLoading(false);
     }
@@ -39,7 +50,6 @@ export default function CreateToken() {
       console.error('error: ', e);
     }
   };
-  console.log(name, symbol, description, imageUrl, decimals, totalSupply);
 
   return (
     <Wrapper>
