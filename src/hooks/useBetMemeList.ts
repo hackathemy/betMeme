@@ -1,5 +1,5 @@
 import pb from '@/api/pocketbase';
-import { IBetMemesProps } from '@/types/betMemes';
+import { IBetMemesProps } from '@/types/bet-memes';
 import { useQuery } from '@tanstack/react-query';
 
 export default function useBetMemeList() {
