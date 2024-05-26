@@ -4,6 +4,7 @@ import Wrapper from '@/components/Wrapper';
 import styles from './index.module.scss';
 import useBetMemeList from '@/hooks/useBetMemeList';
 import Loading from '@/components/Common/Loading';
+import Button from '@/components/Button';
 
 export default function Home() {
   const { isLoading, data: betMemes } = useBetMemeList();
@@ -25,7 +26,7 @@ export default function Home() {
                       Locked Price: <div>{lockedPrice}</div>
                     </div>
                   </div>
-                  <button>Let's Bet!!</button>
+                  <Button name={`Let' Bet!!`} />
                 </div>
               );
             })}

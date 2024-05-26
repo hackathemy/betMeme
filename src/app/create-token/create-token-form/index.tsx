@@ -6,6 +6,10 @@ import { useMemo, useState } from 'react';
 
 import initMoveByteCodeTemplate from './move-bytecode-template';
 import { getBytecode } from './template';
+import styles from './index.module.scss';
+import InputBox from '@/components/InputBox';
+import { isEmpty } from 'ramda';
+import Button from '@/components/Button';
 
 const CreateTokenForm = () => {
   const client = new SuiClient({
@@ -21,6 +25,7 @@ const CreateTokenForm = () => {
   const [imageUrl, setImageUrl] = useState('');
   const [decimals, setDecimals] = useState('9');
   const [totalSupply, setTotalSupply] = useState('10000');
+  const [txResult, setTxResult] = useState('');
 
   const newCoin = useMemo(() => {
     return {
@@ -70,7 +75,7 @@ const CreateTokenForm = () => {
       });
 
       const explorerLink = `https://suiscan.xyz/testnet/tx/${tx.digest}`;
-      console.log(explorerLink);
+      setTxResult(explorerLink);
     } catch (err) {
       console.log(err);
     } finally {
@@ -87,54 +92,60 @@ const CreateTokenForm = () => {
   };
 
   return (
-    <form>
+    <form className={styles.container}>
       <h1>Coin Generator</h1>
-      <div>
-        Name:{' '}
-        <input placeholder="Eg. Sui" value={name || ''} onChange={(val) => setName(val.target.value || '')} required />
-        Coin Symbol:{' '}
-        <input
-          placeholder="Eg. SUI"
+      <div className={styles.inputContainer}>
+        <InputBox
+          title="Name"
+          placeholder="Coin name"
+          value={name || ''}
+          onChange={(val) => setName(val.target.value || '')}
+          required={true}
+        />
+        <InputBox
+          title="Coin Symbol"
+          placeholder="Coin symbol"
           value={symbol || ''}
           onChange={(val) => setSymbol(val.target.value || '')}
-          required
+          required={true}
         />
-        Description:{' '}
-        <input
-          placeholder="Eg. Some description about the coin"
+        <InputBox
+          title="Description"
+          placeholder="Description about the coin"
           value={description || ''}
           onChange={(val) => setDescription(val.target.value || '')}
-          required
+          required={true}
         />
-        Coin Image URL:{' '}
-        <input
-          placeholder="Eg. https://sui.com/images/logo.png"
+        <InputBox
+          title="Coin Image URL"
+          placeholder="https://sui.com/images/logo.png"
           value={imageUrl || ''}
           onChange={(val) => setImageUrl(val.target.value || '')}
-          required
+          required={true}
         />
-        Coin Decimals:{' '}
-        <input
-          type="number"
+        <InputBox
+          title="Coin Decimals"
           placeholder="Coin Decimals"
-          value={decimals}
-          onChange={(val) => setDecimals(val.target.value || '9')}
-          required
-        />
-        Coin Decimals:{' '}
-        <input
+          value={decimals || ''}
+          onChange={(val) => setDecimals(val.target.value || '')}
+          required={true}
           type="number"
-          placeholder="Your total coin supply"
-          value={totalSupply}
-          onChange={(val) => setTotalSupply(val.target.value || '10000')}
-          required
         />
-        <div>
-          <button onClick={onSubmit} disabled={!currentAccount || loading}>
-            Create coin
-          </button>
-        </div>
+        <InputBox
+          title="Total Supply"
+          placeholder="Coin total supply"
+          value={totalSupply || ''}
+          onChange={(val) => setTotalSupply(val.target.value || '')}
+          required={true}
+          type="number"
+        />
+        <Button name="Create coin" onClick={onSubmit} disabled={!currentAccount || loading} />
       </div>
+      {!isEmpty(txResult) && (
+        <a target="_blank" href={txResult} className={styles.explorerLink}>
+          Go to explorer {`->`}
+        </a>
+      )}
     </form>
   );
 };
