@@ -7,9 +7,9 @@ import { useMemo, useState } from 'react';
 import initMoveByteCodeTemplate from './move-bytecode-template';
 import { getBytecode } from './template';
 import styles from './index.module.scss';
-import InputBox from '@/components/InputBox';
+import InputBox from '@/components/Common/InputBox';
 import { isEmpty } from 'ramda';
-import Button from '@/components/Button';
+import Button from '@/components/Common/Button';
 
 const CreateTokenForm = () => {
   const client = new SuiClient({

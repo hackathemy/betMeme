@@ -4,7 +4,7 @@ import Wrapper from '@/components/Wrapper';
 import styles from './index.module.scss';
 import useBetMemeList from '@/hooks/useBetMemeList';
 import Loading from '@/components/Common/Loading';
-import Button from '@/components/Button';
+import Button from '@/components/Common/Button';
 import BetMemeModal from '@/components/BetMemeModal';
 import { useState } from 'react';
 

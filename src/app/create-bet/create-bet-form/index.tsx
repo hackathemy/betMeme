@@ -3,8 +3,8 @@ import { getFullnodeUrl, SuiClient } from '@mysten/sui.js/client';
 import { useMemo, useState } from 'react';
 
 import styles from './index.module.scss';
-import InputBox from '@/components/InputBox';
-import Button from '@/components/Button';
+import InputBox from '@/components/Common/InputBox';
+import Button from '@/components/Common/Button';
 
 const CreateBetForm = () => {
   const client = new SuiClient({

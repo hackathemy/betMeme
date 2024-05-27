@@ -1,5 +1,5 @@
-import Modal from '../Modal';
-import ModalHeader from '../Modal/ModalHeader';
+import Modal from '../Common/Modal';
+import ModalHeader from '../Common/Modal/ModalHeader';
 
 interface IBetMemeModalProps {
   modalView: boolean;
