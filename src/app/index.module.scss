@@ -8,11 +8,83 @@
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  align-items: center;
 
   min-height: 10rem;
 
-  border: 0.1rem solid #000000;
+  border: 0.1rem solid #dbdee9;
   border-radius: 0.4rem;
-  padding: 1rem;
+  padding: 1.5rem;
+}
+
+.cardHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  margin-bottom: 1rem;
+
+  .cardBasic {
+    display: flex;
+  }
+}
+
+.blackContainer {
+  display: flex;
+  align-content: center;
+
+  background-color: #111;
+  padding: 0.4rem 0.8rem;
+  border-radius: 20px;
+
+  color: #fff;
+  font-size: 0.6rem;
+  line-height: normal;
+
+  & + & {
+    margin-left: 0.5rem;
+  }
+
+  .live {
+    margin-right: 0.4rem;
+
+    font-weight: bold;
+  }
+}
+
+.tokenImg {
+  width: 3rem;
+  height: 3rem;
+  margin-right: 1rem;
+  border-radius: 50%;
+}
+
+.cardContent {
+  display: flex;
+
+  margin-top: 0.8rem;
+}
+
+.cardInfo {
+  width: 100%;
+  margin-top: 0.2rem;
+
+  font-size: 0.8rem;
+
+  .cardList {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    margin-bottom: 1rem;
+  }
+}
+
+.button {
+  &:hover {
+    border-color: #111;
+  }
+
+  & + & {
+    margin-top: 1rem;
+  }
 }

@@ -5,6 +5,7 @@ import { useMemo, useState } from 'react';
 import styles from './index.module.scss';
 import InputBox from '@/components/Common/InputBox';
 import Button from '@/components/Common/Button';
+import { TransactionBlock } from '@mysten/sui.js/transactions';
 
 const CreateBetForm = () => {
   const client = new SuiClient({
@@ -29,8 +30,13 @@ const CreateBetForm = () => {
       setLoading(true);
 
       if (!currentAccount) return;
+
+      const txb = new TransactionBlock();
+      console.log(newBet);
     } catch (e) {
       console.error(e);
+    } finally {
+      setLoading(false);
     }
   };
 
