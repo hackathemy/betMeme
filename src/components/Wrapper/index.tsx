@@ -23,7 +23,7 @@ const Wrapper: React.FC<WrapperProps> = ({ children }) => {
       <div>
         <div className={styles.body}>
           {children}
-          <div className={styles.footer}>Footer</div>
+          <div className={styles.footer}>Betmeme</div>
         </div>
       </div>
     </div>

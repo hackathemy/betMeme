@@ -8,10 +8,13 @@ const Header = () => {
   return (
     <div className={styles.container}>
       <div className={styles.wrapper}>
-        <Link href={'/'}>BetMeme</Link>
+        <Link href={'/'}>🦇 BetMeme</Link>
         <div className={styles.content}>
-          <Link className={styles.headerContent} href={`/swap`}>
-            Swap
+          <Link className={styles.headerContent} href={`/`}>
+            Bet
+          </Link>
+          <Link className={styles.headerContent} href={`/create-bet`}>
+            Create Bet
           </Link>
           <Link className={styles.headerContent} href={`/create-token`}>
             Create Token

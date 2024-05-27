@@ -1,0 +1,26 @@
+.container {
+  display: flex;
+  flex-direction: column;
+
+  margin: 0 auto;
+
+  & > h1 {
+    margin-bottom: 1rem;
+
+    font-size: 1.5rem;
+    font-weight: bold;
+  }
+}
+
+.inputContainer {
+  width: 20rem;
+  display: flex;
+  flex-direction: column;
+}
+
+.explorerLink {
+  display: flex;
+  justify-content: flex-end;
+
+  margin-top: 1rem;
+}
