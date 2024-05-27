@@ -5,9 +5,13 @@ import styles from './index.module.scss';
 import useBetMemeList from '@/hooks/useBetMemeList';
 import Loading from '@/components/Common/Loading';
 import Button from '@/components/Button';
+import BetMemeModal from '@/components/BetMemeModal';
+import { useState } from 'react';
 
 export default function Home() {
   const { isLoading, data: betMemes } = useBetMemeList();
+
+  const [modalView, setModalView] = useState(false);
 
   return (
     <Wrapper>

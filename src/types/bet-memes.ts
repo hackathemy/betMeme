@@ -10,6 +10,8 @@ export interface IBetMemesProps {
   denom2StartPrice: number;
   denom1IncreasePercent: number;
   denom2IncreasePercent: number;
+  fees: number;
+  burnAmount: number;
   isActive: boolean;
   isEnd: boolean;
   win?: string;

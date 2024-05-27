@@ -2,7 +2,7 @@ import styles from './index.module.scss';
 
 interface ButtonProps {
   name: string;
-  onClick?: () => {};
+  onClick?: any;
   disabled?: boolean;
 }
 
