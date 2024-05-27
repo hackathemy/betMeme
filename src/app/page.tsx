@@ -20,7 +20,6 @@ export default function Home() {
         {!isLoading && (
           <div className={styles.products}>
             {betMemes?.map((v) => {
-              const lockedPrice = (v.denom1Amount + v.denom2Amount).toFixed(6);
               // 0xfef07a737803d73c50a3c8fc61b88fa2f8893801a51f7b49c6d203b207906231::fud::FUD
               // https://suiscan.xyz/testnet/coin/0xfef07a737803d73c50a3c8fc61b88fa2f8893801a51f7b49c6d203b207906231::fud::FUD/txs
               return (
@@ -28,8 +27,8 @@ export default function Home() {
                   <div>
                     <div>토큰이미지</div>
                     {v.title}
-                    <div>Marked Price: {lockedPrice}</div>
-                    <div>Marked Price: {lockedPrice}</div>
+                    <div>Up: {v.upAmount}</div>
+                    <div>Down: {v.downAmount}</div>
                   </div>
                   <Button name={`Pray for UP 🔺`} />
                   <Button name={`Pray for DOWN🔻`} />
