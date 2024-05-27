@@ -1,0 +1,26 @@
+@import '~@/styles/common/index';
+
+.container {
+  position: fixed;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: $zIndexModal;
+  overflow-y: auto;
+
+  background-color: rgba(0, 0, 0, 0.3);
+}
+
+.content {
+  overflow: hidden;
+
+  width: 25rem;
+  background-color: #fff;
+  border: 0.1rem solid #000;
+  border-radius: 1.6rem;
+}
