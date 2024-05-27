@@ -25,11 +25,9 @@
     "ramda": "^0.30.0",
     "react": "^18",
     "react-dom": "^18",
-    "react-image-file-resizer": "^0.4.8",
     "recoil": "^0.7.7",
     "recoil-persist": "^5.1.0",
     "sass": "^1.77.2",
-    "swr": "^2.2.5",
     "uuid": "^9.0.1"
   },
   "devDependencies": {
