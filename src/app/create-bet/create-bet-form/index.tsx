@@ -27,15 +27,14 @@ const CreateBetForm = () => {
       if (!currentAccount) return;
 
       const txb = new TransactionBlock();
-
+      const [coin] = txb.splitCoins(txb.object('0x78e825662b91f620d86f1bce890b5414123f922ea0044cc8da1898cbb3f8fcd4'), [
+        txb.pure(10 * 1000000000),
+      ]);
+      txb.setGasBudget(10000000);
       txb.moveCall({
-        target: `0xd294e0ea9798b19576a0ea0846150f7b69cb664c7e633157bee5b91694b9bdcf::betmeme::createGame`,
-        arguments: [
-          txb.pure('0x3887f72bdc610515aae42402722b71594239e037aec05938c1bded3a2f1c5f66'),
-          txb.pure(10),
-          txb.pure(duration),
-          txb.pure('0x6'),
-        ],
+        target: `0x14832e50d21c6d6083995e85bb08be0dac26fa9f5ce2af3a0df1d1e9fe825361::betmeme::create`,
+        typeArguments: ['0xfef07a737803d73c50a3c8fc61b88fa2f8893801a51f7b49c6d203b207906231::fud::FUD'],
+        arguments: [txb.pure(10), txb.pure(duration), txb.pure('0x6'), coin],
       });
 
       const { signature, transactionBlockBytes } = await signTransactionBlock.mutateAsync({

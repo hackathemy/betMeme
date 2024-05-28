@@ -16,9 +16,6 @@ const Header = () => {
           <Link className={clsx(styles.headerContent, router === '/' && styles.current)} href="/">
             BetMeme
           </Link>
-          <Link className={clsx(styles.headerContent, router === '/claim' && styles.current)} href="/claim">
-            Claim
-          </Link>
           <Link className={clsx(styles.headerContent, router === '/create-bet' && styles.current)} href="/create-bet">
             Create Bet
           </Link>
@@ -29,7 +26,12 @@ const Header = () => {
             Create Token
           </Link>
         </div>
-        <ConnectWallet />
+        <div className={styles.content}>
+          <Link className={clsx(styles.headerContent, router === '/claim' && styles.current)} href="/claim">
+            My
+          </Link>
+          <ConnectWallet />
+        </div>
       </div>
     </div>
   );
