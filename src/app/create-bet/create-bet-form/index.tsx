@@ -1,11 +1,12 @@
 import { useCurrentAccount, useSignTransactionBlock } from '@mysten/dapp-kit';
 import { getFullnodeUrl, SuiClient } from '@mysten/sui.js/client';
-import { useMemo, useState } from 'react';
+import { useState } from 'react';
 
 import styles from './index.module.scss';
 import InputBox from '@/components/Common/InputBox';
 import Button from '@/components/Common/Button';
 import { TransactionBlock } from '@mysten/sui.js/transactions';
+import { isEmpty } from 'lodash';
 
 const CreateBetForm = () => {
   const client = new SuiClient({
@@ -17,13 +18,7 @@ const CreateBetForm = () => {
   const [loading, setLoading] = useState(false);
   const [coinId, setCoinId] = useState('');
   const [duration, setDuration] = useState('');
-
-  const newBet = useMemo(() => {
-    return {
-      coinId,
-      duration,
-    };
-  }, [coinId, duration]);
+  const [txResult, setTxResult] = useState('');
 
   const createBet = async () => {
     try {
@@ -32,6 +27,7 @@ const CreateBetForm = () => {
       if (!currentAccount) return;
 
       const txb = new TransactionBlock();
+
       txb.moveCall({
         target: `0xd294e0ea9798b19576a0ea0846150f7b69cb664c7e633157bee5b91694b9bdcf::betmeme::createGame`,
         arguments: [
@@ -54,7 +50,7 @@ const CreateBetForm = () => {
       });
 
       const explorerLink = `https://suiscan.xyz/testnet/tx/${tx.digest}`;
-      console.log(explorerLink);
+      setTxResult(explorerLink);
     } catch (e) {
       console.error(e);
     } finally {
@@ -90,6 +86,11 @@ const CreateBetForm = () => {
         />
         <Button name="Create Bet" onClick={onSubmit} disabled={!currentAccount || loading} />
       </div>
+      {!isEmpty(txResult) && (
+        <a target="_blank" href={txResult} className={styles.explorerLink}>
+          Go to explorer {`->`}
+        </a>
+      )}
     </form>
   );
 };
