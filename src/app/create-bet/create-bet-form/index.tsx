@@ -32,7 +32,29 @@ const CreateBetForm = () => {
       if (!currentAccount) return;
 
       const txb = new TransactionBlock();
-      console.log(newBet);
+      txb.moveCall({
+        target: `0xd294e0ea9798b19576a0ea0846150f7b69cb664c7e633157bee5b91694b9bdcf::betmeme::createGame`,
+        arguments: [
+          txb.pure('0x3887f72bdc610515aae42402722b71594239e037aec05938c1bded3a2f1c5f66'),
+          txb.pure(10),
+          txb.pure(duration),
+          txb.pure('0x6'),
+        ],
+      });
+
+      const { signature, transactionBlockBytes } = await signTransactionBlock.mutateAsync({
+        transactionBlock: txb,
+        account: currentAccount,
+      });
+
+      const tx = await client.executeTransactionBlock({
+        signature,
+        transactionBlock: transactionBlockBytes,
+        requestType: 'WaitForEffectsCert',
+      });
+
+      const explorerLink = `https://suiscan.xyz/testnet/tx/${tx.digest}`;
+      console.log(explorerLink);
     } catch (e) {
       console.error(e);
     } finally {
