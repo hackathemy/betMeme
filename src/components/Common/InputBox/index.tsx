@@ -13,8 +13,15 @@ interface InputBoxProps {
 const InputBox: React.FC<InputBoxProps> = ({ title, placeholder, value, onChange, required, type }) => {
   return (
     <div className={styles.container}>
-      <div>{title}</div>
-      <input placeholder={placeholder} value={value} onChange={onChange} required={required} type={type} />
+      <div className={styles.title}>{title}</div>
+      <input
+        className={styles.input}
+        placeholder={placeholder}
+        value={value}
+        onChange={onChange}
+        required={required}
+        type={type}
+      />
     </div>
   );
 };
