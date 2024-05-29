@@ -8,6 +8,7 @@ import styles from './index.module.scss';
 import { IBetMemesProps } from '@/types/bet-memes';
 import InputBox from '../Common/InputBox';
 import { useState } from 'react';
+import CloseIconSVG from '@/assets/icons/common/CloseIcon.svg';
 
 interface IBetMemeModalProps {
   betValue: IBetMemesProps;
@@ -70,7 +71,7 @@ const BetMemeModal: React.FC<IBetMemeModalProps> = ({ betValue, modalView, onClo
     <Modal open={modalView} onClose={onCloseModal}>
       <>
         <ModalHeader>
-          <button onClick={() => onCloseModal(false)}>x</button>
+          <img src={CloseIconSVG.src} onClick={() => onCloseModal(false)} className={styles.closeBtn} />
         </ModalHeader>
         <div className={styles.container}>
           <div>
