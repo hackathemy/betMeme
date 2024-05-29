@@ -1,0 +1,7 @@
+{
+  "hosting": {
+    "public": "out",
+    "site": "betmeme",
+    "ignore": ["firebase.json", "**/.*", "**/node_modules/**"]
+  }
+}

@@ -6,6 +6,7 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
+    "deploy": "next build && firebase deploy",
     "lint": "next lint"
   },
   "dependencies": {
@@ -19,6 +20,7 @@
     "axios": "^1.7.2",
     "bignumber.js": "^9.1.2",
     "clsx": "^2.1.1",
+    "firebase": "^10.12.2",
     "lodash": "^4.17.21",
     "next": "14.2.3",
     "pocketbase": "^0.21.2",
