@@ -7,8 +7,12 @@
   left: 0;
   right: 0;
 
+  background-color: #111;
   width: 100%;
-  height: 4rem;
+  height: 63px;
+  border-bottom: 0.1rem solid #212629;
+
+  font-size: 13px;
 }
 
 .wrapper {
@@ -16,7 +20,7 @@
   justify-content: space-between;
   align-items: center;
 
-  max-width: 120rem;
+  max-width: 1440px;
   height: 100%;
   margin: 0 auto;
   padding: 0 3rem;
@@ -26,21 +30,23 @@
   display: flex;
   align-items: center;
 
-  font-weight: bold;
+  font-weight: 600;
 }
 
 .headerContent {
   position: relative;
 
-  margin-right: 1.5rem;
+  padding: 0.7rem;
+  border-radius: 0.3rem;
+  margin-right: 0.4rem;
 
-  color: #c6c6c6;
+  color: #fff;
 
   &:hover {
-    color: #111;
+    background-color: #31383d;
   }
 }
 
 .current {
-  color: #111;
+  background-color: #31383d;
 }

@@ -4,7 +4,10 @@
   display: flex;
   flex-direction: column;
 
+  background-color: #111;
   min-height: 100vh;
+
+  color: #fff;
 }
 
 .body {
@@ -12,7 +15,7 @@
   flex-direction: column;
   justify-content: space-between;
 
-  max-width: 120rem;
+  max-width: 1440px;
   min-height: calc(100vh - 6rem);
   margin: 6rem auto 0;
   padding: 0 2rem;

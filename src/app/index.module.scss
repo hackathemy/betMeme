@@ -1,90 +1,69 @@
-.products {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 1rem;
-}
-
-.betCard {
+.container {
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
-
-  min-height: 10rem;
-
-  border: 0.1rem solid #dbdee9;
-  border-radius: 0.4rem;
-  padding: 1.5rem;
-}
-
-.cardHeader {
-  display: flex;
   align-items: center;
-  justify-content: space-between;
 
-  margin-bottom: 1rem;
+  margin: 110px 0 200px;
 
-  .cardBasic {
-    display: flex;
-  }
-}
-
-.blackContainer {
-  display: flex;
-  align-content: center;
-
-  background-color: #111;
-  padding: 0.4rem 0.8rem;
-  border-radius: 20px;
-
-  color: #fff;
-  font-size: 0.6rem;
-  line-height: normal;
-
-  & + & {
-    margin-left: 0.5rem;
-  }
-
-  .live {
-    margin-right: 0.4rem;
-
+  h1 {
+    font-size: 40px;
     font-weight: bold;
   }
 }
 
-.tokenImg {
-  width: 3rem;
-  height: 3rem;
-  margin-right: 1rem;
-  border-radius: 50%;
+.subTitle {
+  margin-top: 30px;
+
+  font-size: 20px;
+  color: rgb(182, 182, 182);
 }
 
-.cardContent {
-  display: flex;
+.imgContainer {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px;
 
-  margin-top: 0.8rem;
-}
+  margin-top: 50px;
 
-.cardInfo {
-  width: 100%;
-  margin-top: 0.2rem;
-
-  font-size: 0.8rem;
-
-  .cardList {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-
-    margin-bottom: 1rem;
+  img {
+    object-fit: cover;
+    width: 180px;
+    height: 300px;
+    border-radius: 10px;
   }
 }
 
-.button {
-  &:hover {
-    border-color: #111;
-  }
+.btnHover {
+  cursor: pointer;
 
-  & + & {
-    margin-top: 1rem;
-  }
+  width: 150px;
+  height: 40px;
+  margin-top: 30px;
+  border-radius: 50px;
+  border: none;
+  background-size: 300% 100%;
+
+  font-size: 13px;
+  color: #fff;
+  text-align: center;
+
+  -o-transition: all 0.4s ease-in-out;
+  -webkit-transition: all 0.4s ease-in-out;
+  transition: all 0.4s ease-in-out;
+}
+
+.btnHover:hover {
+  background-position: 100% 0;
+  -o-transition: all 0.4s ease-in-out;
+  -webkit-transition: all 0.4s ease-in-out;
+  transition: all 0.4s ease-in-out;
+}
+
+.btnHover:focus {
+  outline: none;
+}
+
+.btnHover.color8 {
+  background-image: linear-gradient(to right, #29323c, #485563, #2b5876, #4e4376);
+  box-shadow: 0 4px 15px 0 rgba(45, 54, 65, 0.75);
 }

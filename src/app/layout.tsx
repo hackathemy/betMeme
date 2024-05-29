@@ -1,6 +1,8 @@
 'use client';
 
 import '@/styles/globals.scss';
+import '@fontsource/inter';
+
 import { SuiClientProvider, WalletProvider, createNetworkConfig } from '@mysten/dapp-kit';
 import { getFullnodeUrl } from '@mysten/sui.js/client';
 

@@ -21,10 +21,7 @@ const Wrapper: React.FC<WrapperProps> = ({ children }) => {
       <Header />
 
       <div>
-        <div className={styles.body}>
-          {children}
-          <div className={styles.footer}>Betmeme</div>
-        </div>
+        <div className={styles.body}>{children}</div>
       </div>
     </div>
   );
