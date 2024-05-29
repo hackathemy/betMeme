@@ -1,13 +1,20 @@
 'use client';
 
 import '@/styles/globals.scss';
-import { SuiClientProvider, WalletProvider } from '@mysten/dapp-kit';
+import { SuiClientProvider, WalletProvider, createNetworkConfig } from '@mysten/dapp-kit';
+import { getFullnodeUrl } from '@mysten/sui.js/client';
 
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
 import { RecoilRoot } from 'recoil';
 
 const queryClient = new QueryClient();
+
+const { networkConfig } = createNetworkConfig({
+  localnet: { url: getFullnodeUrl('localnet') },
+  mainnet: { url: getFullnodeUrl('mainnet') },
+  testnet: { url: getFullnodeUrl('testnet') },
+});
 
 export default function RootLayout({
   children,
@@ -19,7 +26,7 @@ export default function RootLayout({
       <body>
         <RecoilRoot>
           <QueryClientProvider client={queryClient}>
-            <SuiClientProvider>
+            <SuiClientProvider networks={networkConfig} defaultNetwork="testnet">
               <WalletProvider autoConnect stashedWallet={{ name: 'Sui Coins' }}>
                 {children}
               </WalletProvider>
