@@ -1,0 +1,164 @@
+.cardContainer {
+  position: relative;
+  display: flex;
+
+  width: fit-content;
+}
+
+.backgroundEnd {
+  position: absolute;
+  top: 0;
+  left: 0;
+
+  width: 100%;
+  height: 100%;
+  border-radius: 10px;
+  background-color: rgba(255, 130, 130, 0.308);
+
+  &.up {
+    background-color: rgba(159, 255, 130, 0.308);
+  }
+}
+
+.cardContent {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+
+  width: 400px;
+  height: 330px;
+  padding: 20px;
+  border-radius: 10px;
+  backdrop-filter: blur(30px);
+  background-color: rgba(65, 65, 65, 0.308);
+  border: 1px solid rgba(255, 255, 255, 0.089);
+}
+
+.cardContainer::before {
+  content: '';
+  z-index: 0;
+  position: absolute;
+  right: 80px;
+  top: 50px;
+  transition: all 1s;
+
+  width: 100px;
+  height: 100px;
+  background-color: rgb(144, 161, 255);
+  border-radius: 50%;
+}
+
+.cardContainer:hover::before {
+  transform: translate(-120px, 100px);
+}
+
+.liveHeader {
+  display: flex;
+  align-items: center;
+}
+
+.isLive {
+  display: flex;
+  align-items: center;
+
+  margin-right: 10px;
+
+  .circle {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    margin-right: 5px;
+  }
+
+  .next {
+    background-color: #feab03;
+  }
+
+  .live {
+    background-color: #15ae62;
+  }
+
+  .expired {
+    background-color: #919eab;
+  }
+}
+
+.betInfo {
+  display: flex;
+  align-items: center;
+
+  margin: 20px 0;
+
+  .tokenImg {
+    width: 50px;
+    height: 50px;
+    margin-right: 10px;
+    border-radius: 50%;
+  }
+}
+
+.lockedContainer {
+  background-color: rgba(65, 65, 65, 0.308);
+  margin-top: 10px;
+  border: 1px solid #31383d;
+  padding: 20px;
+  border-radius: 10px;
+
+  .betResult {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    margin: 10px 0 20px;
+
+    font-size: 20px;
+
+    .betPercent {
+      background-color: #15ae62;
+      padding: 10px 15px;
+      border-radius: 5px;
+
+      font-size: 15px;
+    }
+  }
+
+  .lockedAmount {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    margin-top: 10px;
+  }
+}
+
+.betStatus {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+
+  .status {
+    padding: 15px;
+
+    text-align: center;
+    opacity: 0.3;
+
+    &.up {
+      background-color: #15ae62;
+      border-radius: 10px 0 0 10px;
+    }
+
+    &.down {
+      background-color: #ae1515;
+      border-radius: 0 10px 10px 0;
+    }
+
+    &.priceWin {
+      opacity: 1;
+    }
+  }
+}
+
+.button {
+  background-color: rgb(41, 41, 41, 0.5);
+}
