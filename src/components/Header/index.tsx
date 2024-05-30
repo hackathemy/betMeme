@@ -17,13 +17,13 @@ const Header = () => {
             BetMeme
           </Link>
           <Link className={clsx(styles.headerContent, router === '/create-bet' && styles.current)} href="/create-bet">
-            Create Bet
+            Create MEME Bet
           </Link>
           <Link
-            className={clsx(styles.headerContent, router === '/create-token' && styles.current)}
-            href="/create-token"
+            className={clsx(styles.headerContent, router === '/create-nft-bet' && styles.current)}
+            href="/create-nft-bet"
           >
-            Create Token
+            Create NFT Bet
           </Link>
         </div>
         <div className={styles.content}>

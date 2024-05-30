@@ -8,9 +8,10 @@ interface InputBoxProps {
   onChange: ChangeEventHandler<HTMLInputElement>;
   required?: boolean;
   type?: string;
+  readonly?: boolean;
 }
 
-const InputBox: React.FC<InputBoxProps> = ({ title, placeholder, value, onChange, required, type }) => {
+const InputBox: React.FC<InputBoxProps> = ({ title, placeholder, value, onChange, required, type, readonly }) => {
   return (
     <div className={styles.container}>
       <div className={styles.title}>{title}</div>
@@ -21,6 +22,7 @@ const InputBox: React.FC<InputBoxProps> = ({ title, placeholder, value, onChange
         onChange={onChange}
         required={required}
         type={type}
+        readOnly={readonly}
       />
     </div>
   );

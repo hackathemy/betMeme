@@ -1,7 +1,7 @@
 import { SuiClient, getFullnodeUrl } from '@mysten/sui.js/client';
 import Modal from '../Common/Modal';
 import ModalHeader from '../Common/Modal/ModalHeader';
-import { useCurrentAccount, useSignTransactionBlock } from '@mysten/dapp-kit';
+import { useCurrentAccount, useSignTransactionBlock, useSuiClientQuery } from '@mysten/dapp-kit';
 import { TransactionBlock } from '@mysten/sui.js/transactions';
 import Button from '../Common/Button';
 import styles from './index.module.scss';
@@ -9,42 +9,53 @@ import { IBetMemesProps } from '@/types/bet-memes';
 import InputBox from '../Common/InputBox';
 import { useState } from 'react';
 import CloseIconSVG from '@/assets/icons/common/CloseIcon.svg';
+import { DECIMAL_UNIT, GAS_BUDGET } from '@/constant';
 
 interface IBetMemeModalProps {
   betValue: IBetMemesProps;
+  betData: any;
   modalView: boolean;
   onCloseModal: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-const BetMemeModal: React.FC<IBetMemeModalProps> = ({ betValue, modalView, onCloseModal }) => {
+const BetMemeModal: React.FC<IBetMemeModalProps> = ({ betValue, betData, modalView, onCloseModal }) => {
   const client = new SuiClient({
     url: getFullnodeUrl('testnet'),
   });
   const currentAccount = useCurrentAccount();
   const signTransactionBlock = useSignTransactionBlock();
+  const { data, isPending, error } = useSuiClientQuery('getOwnedObjects', {
+    owner: currentAccount?.address as string,
+    options: {
+      showType: true,
+      showOwner: true,
+      showPreviousTransaction: true,
+      showDisplay: true,
+      showContent: true,
+    },
+  });
+
+  const coins = data?.data.filter((obj: any) => {
+    return obj.data.type.indexOf(betValue.denom) >= 0;
+  });
 
   const [betAmount, setBetAmount] = useState('');
 
   const betting = async (direction: boolean) => {
     try {
-      if (!currentAccount) {
+      if (!currentAccount || !coins || !coins.length) {
         return;
       }
 
       const txb = new TransactionBlock();
-      const [coin] = txb.splitCoins(txb.object('0x5ebcbb21d0fc805fd0cab535550e032e557285d498b3a55ac50416843966c5f7'), [
-        txb.pure(Number(betAmount) * 1000000000),
+      const [coin] = txb.splitCoins(txb.object(coins[0].data?.objectId || ''), [
+        txb.pure(Number(betAmount) * DECIMAL_UNIT),
       ]);
-      txb.setGasBudget(10000000);
+      txb.setGasBudget(GAS_BUDGET);
       txb.moveCall({
-        target: `0x14832e50d21c6d6083995e85bb08be0dac26fa9f5ce2af3a0df1d1e9fe825361::betmeme::bet`,
-        typeArguments: ['0xfef07a737803d73c50a3c8fc61b88fa2f8893801a51f7b49c6d203b207906231::fud::FUD'],
-        arguments: [
-          txb.pure('0xace1d297d3610a46f351416200078988376951dfa0614256f58006134d1ad2b2'),
-          txb.pure('0x6'),
-          txb.pure(direction),
-          coin,
-        ],
+        target: `${process.env.NEXT_PUBLIC_PACKAGE_ID}::betmeme::bet`,
+        typeArguments: [betValue.denom],
+        arguments: [txb.pure(betValue.object), txb.pure('0x6'), txb.pure(direction), coin],
       });
 
       const { signature, transactionBlockBytes } = await signTransactionBlock.mutateAsync({
@@ -74,10 +85,10 @@ const BetMemeModal: React.FC<IBetMemeModalProps> = ({ betValue, modalView, onClo
         <div className={styles.container}>
           <div>
             <div className={styles.betStatus}>
-              Up: <div>{betValue.upAmount}</div>
+              Up: <div>{betData.upAmount}</div>
             </div>
             <div className={styles.betStatus}>
-              Down: <div>{betValue.downAmount}</div>
+              Down: <div>{betData.downAmount}</div>
             </div>
             <div className={styles.amountInput}>
               <div>amount: 123</div>
@@ -89,18 +100,8 @@ const BetMemeModal: React.FC<IBetMemeModalProps> = ({ betValue, modalView, onClo
               />
             </div>
           </div>
-          <Button
-            styled={styles.button}
-            name={`Pray for 🔺 UP`}
-            disabled={betValue.isEnd}
-            onClick={() => betting(true)}
-          />
-          <Button
-            styled={styles.button}
-            name={`Pray for 🔻 Down`}
-            disabled={betValue.isEnd}
-            onClick={() => betting(false)}
-          />
+          <Button styled={styles.button} name={`Pray for 🔺 UP`} onClick={() => betting(true)} />
+          <Button styled={styles.button} name={`Pray for 🔻 Down`} onClick={() => betting(false)} />
         </div>
       </>
     </Modal>

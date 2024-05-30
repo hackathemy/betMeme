@@ -9,27 +9,9 @@ import Bet2JPEG from '@/assets/icons/main/bet2.jpeg';
 import Bet3JPEG from '@/assets/icons/main/bet3.jpeg';
 import Bet4JPEG from '@/assets/icons/main/bet4.jpeg';
 import { useRouter } from 'next/navigation';
-import { useCurrentAccount, useSuiClientQuery } from '@mysten/dapp-kit';
-import { SuiClient, getFullnodeUrl } from '@mysten/sui.js/client';
 
 export default function Home() {
   const router = useRouter();
-  const client = new SuiClient({
-    url: getFullnodeUrl('testnet'),
-  });
-  const currentAccount = useCurrentAccount();
-  const { data, isPending, error } = useSuiClientQuery('getObject', {
-    id: '0xace1d297d3610a46f351416200078988376951dfa0614256f58006134d1ad2b2',
-    options: {
-      showType: true,
-      showOwner: true,
-      showPreviousTransaction: true,
-      showDisplay: true,
-      showContent: true,
-    },
-  });
-
-  console.log(data?.data?.content?.fields);
   return (
     <Wrapper>
       <div>

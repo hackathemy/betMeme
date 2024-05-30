@@ -21,7 +21,6 @@ const CreateBetForm = () => {
   const objects = useMakeObjects(currentAccount?.address || '');
 
   const [loading, setLoading] = useState(false);
-  const [txDigest, setTxDigest] = useState('');
   const [coinId, setCoinId] = useState('');
   const [coinType, setCoinType] = useState('');
   const [duration, setDuration] = useState<number>();
@@ -74,7 +73,7 @@ const CreateBetForm = () => {
       const collection = {
         title: 'Fud the Pug',
         object: objectId,
-        denom: coinType,
+        denom: 'FUD',
       };
 
       await pb.collection('betmemes').create(collection);
@@ -109,14 +108,36 @@ const CreateBetForm = () => {
 
   return (
     <form className={styles.container}>
-      <h1>Create MEME Bet</h1>
-      <div className={styles.subTitle}>Bet Token Price UP or DOWN</div>
+      <h1>Create NFT Bet</h1>
+      <div className={styles.subTitle}>Bet NFT Price UP or DOWN</div>
       <div className={styles.inputContainer}>
         <div className={styles.selectContainer}>
-          <div className={styles.selectTitle}>Coin</div>
+          <div className={styles.selectTitle}>NFT</div>
           <Select
             className={styles.selectContent}
-            placeholder="Choose coin"
+            placeholder="Choose NFT"
+            size="md"
+            variant="solid"
+            onChange={handleChange}
+          >
+            {objects.map((v) => {
+              const regex = /0x2::coin::Coin<([^:]+)::[^:]+::([^>]+)>/;
+              const match = v.data.content.type.match(regex);
+              const type = match?.[2] || '';
+
+              return (
+                <Option key={v.data.objectId} value={v.data}>
+                  {type}
+                </Option>
+              );
+            })}
+          </Select>
+        </div>
+        <div className={styles.selectContainer}>
+          <div className={styles.selectTitle}>Bet Coin</div>
+          <Select
+            className={styles.selectContent}
+            placeholder="Choose bet coin"
             size="md"
             variant="solid"
             onChange={handleChange}

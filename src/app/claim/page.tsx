@@ -26,22 +26,32 @@ export default function Claim() {
     },
   });
 
-  const claim = async (userBet: any) => {
+  const claim = async (type: string, userBet: any) => {
     if (!currentAccount) {
       return;
     }
 
     const txb = new TransactionBlock();
     txb.setGasBudget(10000000);
-    txb.moveCall({
-      target: `0xcaa782e6d3bb6bfa9819a57312292d4558900f96f8fe46062f4059d4d9673ecd::betmeme::claim`,
-      typeArguments: ['0xfef07a737803d73c50a3c8fc61b88fa2f8893801a51f7b49c6d203b207906231::fud::FUD'],
-      arguments: [
-        txb.object(`${userBet.data.content.fields.gameId}`),
-        txb.pure(`${userBet.data.objectId}`),
-        txb.pure('0x6'),
-      ],
-    });
+
+    //게임 아이디로 gameObject 조회해서 타입 가져오기(pb에도 있긴 함)
+    if (type === 'claim') {
+      txb.moveCall({
+        target: `${process.env.NEXT_PUBLIC_PACKAGE_ID}::betmeme::${type}`,
+        typeArguments: ['0xfef07a737803d73c50a3c8fc61b88fa2f8893801a51f7b49c6d203b207906231::fud::FUD'],
+        arguments: [
+          txb.object(`${userBet.data.content.fields.gameId}`),
+          txb.pure(`${userBet.data.objectId}`),
+          txb.pure('0x6'),
+        ],
+      });
+    } else {
+      txb.moveCall({
+        target: `${process.env.NEXT_PUBLIC_PACKAGE_ID}::betmeme::${type}`,
+        typeArguments: ['0xfef07a737803d73c50a3c8fc61b88fa2f8893801a51f7b49c6d203b207906231::fud::FUD'],
+        arguments: [txb.object(`${userBet.data.content.fields.gameId}`), txb.pure(`${userBet.data.objectId}`)],
+      });
+    }
 
     const { signature, transactionBlockBytes } = await signTransactionBlock.mutateAsync({
       transactionBlock: txb,
@@ -65,7 +75,7 @@ export default function Claim() {
         <div className={styles.cardWrapper}>
           {data?.data
             .filter((d) => d.data?.type?.includes('UserBet'))
-            .map((d) => {
+            .map((d: any) => {
               return (
                 <div key={d.data?.digest} className={styles.claimContainer}>
                   <div className={styles.item}>
@@ -74,7 +84,7 @@ export default function Claim() {
                         <p>Winner Price</p>
                         <LottieContainer lottieData={TrophyLottie} className={styles.lottie} />
                       </div>
-
+                      {/* 게임 정보가 있었으면 좋겠음, 게임아이디로 조회 하면 될 것 같은데 pb에 데이터들을 좀 넣어두면 도움이 되려나. */}
                       <span className={styles.upBorder}></span>
                       <span className={styles.downBorder}></span>
                     </div>
@@ -89,8 +99,9 @@ export default function Claim() {
                         </div>
                       </div>
                       <div className={styles.buttons}>
-                        <button onClick={() => claim(d)}>claim</button>
-                        <button onClick={() => console.log('')}>challenge</button>
+                        {/* 아직 진행중, 클레임, 챌린지 중에 한 상태만 있으면 됨 */}
+                        <button onClick={() => claim('claim', d)}>claim</button>
+                        <button onClick={() => claim('callenge', d)}>challenge</button>
                       </div>
                     </div>
                   </div>

@@ -29,16 +29,18 @@
 .content {
   display: flex;
   align-items: center;
-
+  font-size: 0.9rem;
   font-weight: 600;
 }
 
 .headerContent {
   position: relative;
 
-  padding: 0.7rem;
+  padding: 0.9rem;
+  padding-right: 1rem;
+  padding-left: 1rem;
   border-radius: 0.3rem;
-  margin-right: 0.4rem;
+  margin-right: 1rem;
 
   color: #fff;
 

@@ -4,6 +4,8 @@ import Button from '../Common/Button';
 import clsx from 'clsx';
 import { useMemo, useState } from 'react';
 import BetMemeModal from '../BetMemeModal';
+import { useSuiClientQuery } from '@mysten/dapp-kit';
+import { RESULT_DURATION } from '@/constant';
 
 interface IBetCardProps {
   betValue: IBetMemesProps;
@@ -11,42 +13,53 @@ interface IBetCardProps {
 
 const BetCard = ({ betValue }: IBetCardProps) => {
   const [modalView, setModalView] = useState(false);
+  const { data, isPending, error } = useSuiClientQuery('getObject', {
+    id: betValue.object,
+    options: {
+      showType: true,
+      showOwner: true,
+      showPreviousTransaction: true,
+      showDisplay: true,
+      showContent: true,
+    },
+  });
 
-  const lockedAmount = (Number(betValue.upAmount) + Number(betValue.downAmount)).toFixed(9);
-  // 0xfef07a737803d73c50a3c8fc61b88fa2f8893801a51f7b49c6d203b207906231::fud::FUD
-  // https://suiscan.xyz/testnet/coin/0xfef07a737803d73c50a3c8fc61b88fa2f8893801a51f7b49c6d203b207906231::fud::FUD/txs
+  if (isPending || error) return <div>Loading...</div>;
 
-  const nowStatus = useMemo(() => {
-    if (!betValue.isActive && !betValue.isEnd) {
-      return 'next';
-    } else if (betValue.isActive && !betValue.isEnd) {
-      return 'live';
-    }
+  const content: any = data.data?.content;
+  const betData = content.fields;
+  const date = new Date();
+  const lockedAmount = (Number(betData.upAmount) + Number(betData.downAmount)).toFixed(9);
+  let nowStatus = '';
+  if (date.getTime() > Number(betData.startTime) + Number(betData.duration) + RESULT_DURATION) {
+    nowStatus = 'expired';
+  } else if (date.getTime() > Number(betData.startTime) + Number(betData.duration)) {
+    nowStatus = 'next';
+  } else {
+    nowStatus = 'live';
+  }
 
-    return 'expired';
-  }, [betValue]);
-
-  const priceStatus = useMemo(() => {
-    const status = 0.123432 - Number(betValue.startPrice);
-
-    if (status > 0) {
-      return '+';
-    }
-
-    return '-';
-  }, [betValue]);
+  const remain = (Number(betData.duration) - (date.getTime() - Number(betData.startTime))) / (1000 * 60);
+  const remainResult =
+    (RESULT_DURATION + Number(betData.duration) - (date.getTime() - Number(betData.startTime))) / (1000 * 60);
 
   return (
     <div className={styles.cardContainer}>
-      {betValue.isEnd && <div className={clsx(styles.backgroundEnd, styles[betValue.win || 'down'])} />}
+      {nowStatus === 'expired' && <div className={clsx(styles.backgroundEnd, styles[betData.win || 'down'])} />}
       <div className={styles.cardContent}>
         <div>
           <div className={styles.liveHeader}>
             <div className={styles.isLive}>
               <div className={clsx(styles.circle, styles[nowStatus])} />
-              {nowStatus[0].toUpperCase() + nowStatus.slice(1, nowStatus.length)}
+              {nowStatus === 'expired' ? 'Bet game ended' : nowStatus === 'next' ? 'Wait for result' : 'Betting now'}
             </div>
-            <div>00:00:00</div>
+            <div>
+              {nowStatus === 'expired'
+                ? ''
+                : nowStatus === 'next'
+                  ? `${remainResult.toFixed(0)} min`
+                  : `${remain.toFixed(0)} min`}
+            </div>
           </div>
           <div>
             <div className={styles.betInfo}>
@@ -58,36 +71,49 @@ const BetCard = ({ betValue }: IBetCardProps) => {
               {betValue.title}
             </div>
             <div className={styles.lockedContainer}>
-              Current Price
+              Price
               <div className={styles.betResult}>
-                $0.12321112<div className={styles.betPercent}>+ 0.1243%</div>
-              </div>
-              <div className={styles.lockedAmount}>
-                Locked Price:<div>${0.12321112}</div>
+                Marked ${betData.markedPrice}
+                <div className={styles.betPercent}>Current $1.1</div>
               </div>
               <div className={styles.lockedAmount}>
                 Locked Pool:
-                <div>
-                  {lockedAmount} {betValue.denom}
-                </div>
+                <div>{lockedAmount}</div>
+              </div>
+              <div className={styles.lockedAmount}>
+                Prize Pool:
+                <div>{betData.prizeAmount}</div>
               </div>
             </div>
           </div>
         </div>
         <div>
-          {!betValue.isActive && !betValue.isEnd && (
+          {nowStatus === 'live' && (
             <Button styled={styles.button} name="Let's Bet!!" onClick={() => setModalView(true)} />
           )}
-          {betValue.isActive && !betValue.isEnd && (
+          {nowStatus === 'next' && (
             <div className={styles.betStatus}>
-              <div className={clsx(styles.status, styles.up, priceStatus === '+' && styles.priceWin)}>Up</div>
-              <div className={clsx(styles.status, styles.down, priceStatus === '-' && styles.priceWin)}>Down</div>
+              <div className={clsx(styles.status, styles.up, betData.upAmount > betData.downAmount && styles.priceWin)}>
+                Up {betData.upAmount}
+              </div>
+              <div
+                className={clsx(styles.status, styles.down, betData.upAmount <= betData.downAmount && styles.priceWin)}
+              >
+                Down {betData.downAmount}
+              </div>
             </div>
           )}
-          {betValue.isEnd && <Button styled={styles.button} name="End Bet" disabled={betValue.isEnd} />}
+          {nowStatus === 'expired' && (
+            <Button styled={styles.button} name="End Bet" disabled={nowStatus === 'expired'} />
+          )}
         </div>
       </div>
-      <BetMemeModal betValue={betValue} modalView={modalView} onCloseModal={() => setModalView(false)} />
+      <BetMemeModal
+        betValue={betValue}
+        betData={betData}
+        modalView={modalView}
+        onCloseModal={() => setModalView(false)}
+      />
     </div>
   );
 };
