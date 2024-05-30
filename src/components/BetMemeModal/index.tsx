@@ -3,13 +3,15 @@ import Modal from '../Common/Modal';
 import ModalHeader from '../Common/Modal/ModalHeader';
 import { useCurrentAccount, useSignTransactionBlock, useSuiClientQuery } from '@mysten/dapp-kit';
 import { TransactionBlock } from '@mysten/sui.js/transactions';
-import Button from '../Common/Button';
 import styles from './index.module.scss';
 import { IBetMemesProps } from '@/types/bet-memes';
 import InputBox from '../Common/InputBox';
 import { useState } from 'react';
 import CloseIconSVG from '@/assets/icons/common/CloseIcon.svg';
 import { DECIMAL_UNIT, GAS_BUDGET } from '@/constant';
+import clsx from 'clsx';
+import IncreaseIconPNG from '@/assets/icons/common/IncreaseIcon.png';
+import DecreaseIconPNG from '@/assets/icons/common/DecreaseIcon.png';
 
 interface IBetMemeModalProps {
   betValue: IBetMemesProps;
@@ -71,6 +73,8 @@ const BetMemeModal: React.FC<IBetMemeModalProps> = ({ betValue, betData, modalVi
 
       const explorerLink = `https://testnet.suivision.xyz/txblock/${tx.digest}`;
       console.log(explorerLink);
+      onCloseModal(false);
+      setBetAmount('');
     } catch (e) {
       console.error(e);
     }
@@ -85,23 +89,36 @@ const BetMemeModal: React.FC<IBetMemeModalProps> = ({ betValue, betData, modalVi
         <div className={styles.container}>
           <div>
             <div className={styles.betStatus}>
-              Up: <div>{betData.upAmount}</div>
+              Up<div className={styles.upAmount}>{betData.upAmount}</div>
             </div>
             <div className={styles.betStatus}>
-              Down: <div>{betData.downAmount}</div>
+              Down<div className={styles.downAmount}>{betData.downAmount}</div>
             </div>
             <div className={styles.amountInput}>
-              <div>amount: 123</div>
+              <div className={styles.amountPrice}>Budget: {123}</div>
               <InputBox
                 title="Bet Amount"
                 placeholder="How much?"
                 value={betAmount}
                 onChange={(val) => setBetAmount(val.target.value || '')}
+                styled={styles.inputBox}
               />
             </div>
           </div>
-          <Button styled={styles.button} name={`Pray for 🔺 UP`} onClick={() => betting(true)} />
-          <Button styled={styles.button} name={`Pray for 🔻 Down`} onClick={() => betting(false)} />
+          <div className={styles.buttonContainer}>
+            <button className={clsx(styles.button, styles.up)} onClick={() => betting(true)}>
+              UP
+              <div className={clsx(styles.cursor, styles.upImg)}>
+                <img src={IncreaseIconPNG.src} />
+              </div>
+            </button>
+            <button className={clsx(styles.button, styles.down)} onClick={() => betting(false)}>
+              DOWN
+              <div className={clsx(styles.cursor, styles.downImg)}>
+                <img src={DecreaseIconPNG.src} />
+              </div>
+            </button>
+          </div>
         </div>
       </>
     </Modal>

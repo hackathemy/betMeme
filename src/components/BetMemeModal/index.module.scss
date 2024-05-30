@@ -12,8 +12,86 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
+
+  font-size: 20px;
+
+  & + & {
+    margin-top: 20px;
+  }
+
+  .upAmount {
+    color: #15ae62;
+  }
+
+  .downAmount {
+    color: #ae1515;
+  }
 }
 
 .amountInput {
-  margin: 20px 0;
+  position: relative;
+
+  margin: 50px 0 20px;
+
+  .amountPrice {
+    position: absolute;
+    top: 0;
+    right: 0;
+  }
+}
+
+.buttonContainer {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.button {
+  display: flex;
+  justify-content: center;
+
+  background-color: rgba(41, 41, 41, 0.5);
+  border: 0.1rem solid #31383d;
+  padding: 20px;
+
+  &:hover {
+    .upImg {
+      transform: translateY(-10px);
+    }
+
+    .downImg {
+      transform: translateY(+10px);
+    }
+  }
+
+  &.up {
+    border-radius: 10px 0 0 10px;
+
+    &:hover {
+      background-color: #13a65c59;
+    }
+  }
+
+  &.down {
+    border-radius: 0 10px 10px 0;
+
+    &:hover {
+      background-color: #a6131359;
+    }
+  }
+
+  .cursor {
+    transition: transform 250ms;
+
+    margin-left: 10px;
+
+    & > img {
+      width: 20px;
+      height: 20px;
+    }
+  }
+}
+
+.inputBox {
+  border: 1px solid rgba(255, 255, 255, 0.089);
 }

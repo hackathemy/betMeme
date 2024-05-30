@@ -2,7 +2,7 @@ import { IBetMemesProps } from '@/types/bet-memes';
 import styles from './index.module.scss';
 import Button from '../Common/Button';
 import clsx from 'clsx';
-import { useMemo, useState } from 'react';
+import { useState } from 'react';
 import BetMemeModal from '../BetMemeModal';
 import { useSuiClientQuery } from '@mysten/dapp-kit';
 import { RESULT_DURATION } from '@/constant';

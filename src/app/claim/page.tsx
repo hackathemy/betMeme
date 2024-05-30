@@ -34,7 +34,7 @@ export default function Claim() {
     const txb = new TransactionBlock();
     txb.setGasBudget(10000000);
 
-    //게임 아이디로 gameObject 조회해서 타입 가져오기(pb에도 있긴 함)
+    //TODO: 게임 아이디로 gameObject 조회해서 타입 가져오기(pb에도 있긴 함)
     if (type === 'claim') {
       txb.moveCall({
         target: `${process.env.NEXT_PUBLIC_PACKAGE_ID}::betmeme::${type}`,
