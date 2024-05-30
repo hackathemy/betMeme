@@ -1,6 +1,7 @@
 import { useCurrentAccount, useSignTransactionBlock, useSuiClientQuery } from '@mysten/dapp-kit';
 import { getFullnodeUrl, SuiClient } from '@mysten/sui.js/client';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import pb from '@/api/pocketbase';
 
 import { Option, Select } from '@mui/joy';
 import styles from './index.module.scss';
@@ -9,6 +10,7 @@ import Button from '@/components/Common/Button';
 import { TransactionBlock } from '@mysten/sui.js/transactions';
 import { isEmpty } from 'lodash';
 import useMakeObjects from '@/hooks/useMakeObjects';
+import useGetTransactionBlock from '@/hooks/useGetTransactionBlock';
 
 const CreateBetForm = () => {
   const client = new SuiClient({
@@ -19,9 +21,44 @@ const CreateBetForm = () => {
   const objects = useMakeObjects(currentAccount?.address || '');
 
   const [loading, setLoading] = useState(false);
+  const [txDigest, setTxDigest] = useState('');
   const [coinId, setCoinId] = useState('');
   const [duration, setDuration] = useState('3600');
   const [txResult, setTxResult] = useState('');
+
+  const { data: betObject, refetch } = useGetTransactionBlock(txDigest);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      if (txDigest) {
+        refetch();
+      }
+    }, 5000);
+
+    return () => clearTimeout(timer);
+  }, [txDigest, refetch]);
+
+  useEffect(() => {
+    if (betObject) {
+      saveBetObjectToDB(betObject);
+    }
+  }, [betObject]);
+
+  const saveBetObjectToDB = async (betObject: any) => {
+    try {
+      const collection = {
+        title: 'Fud the Pug',
+        object: betObject,
+        denom: 'FUD',
+      };
+
+      await pb.collection('betmemes').create(collection);
+
+      setTxDigest('');
+    } catch (error) {
+      console.error('Error saving betObject to DB:', error);
+    }
+  };
 
   const createBet = async () => {
     try {
@@ -33,9 +70,9 @@ const CreateBetForm = () => {
       const [coin] = txb.splitCoins(txb.object(coinId), [txb.pure(10 * 1000000000)]);
       txb.setGasBudget(10000000);
       txb.moveCall({
-        target: `0x14832e50d21c6d6083995e85bb08be0dac26fa9f5ce2af3a0df1d1e9fe825361::betmeme::create`,
-        typeArguments: ['0x9b388609e04af010f9b35af93f4f4cb672774183bba254b95156fd8c9589b396::jun::JUN'],
-        arguments: [txb.pure(10), txb.pure(duration), txb.pure('0x6'), coin],
+        target: `0xcaa782e6d3bb6bfa9819a57312292d4558900f96f8fe46062f4059d4d9673ecd::betmeme::create`,
+        typeArguments: ['0xfef07a737803d73c50a3c8fc61b88fa2f8893801a51f7b49c6d203b207906231::fud::FUD'],
+        arguments: [txb.pure(10), txb.pure(duration), txb.pure(1000), txb.pure('0x6'), coin],
       });
 
       const { signature, transactionBlockBytes } = await signTransactionBlock.mutateAsync({
@@ -49,8 +86,8 @@ const CreateBetForm = () => {
         requestType: 'WaitForEffectsCert',
       });
 
-      console.log(tx);
-      const explorerLink = `https://suiscan.xyz/testnet/tx/${tx.digest}`;
+      setTxDigest(tx.digest);
+      const explorerLink = `https://testnet.suivision.xyz/txblock/${tx.digest}`;
       setTxResult(explorerLink);
     } catch (e) {
       console.error(e);
@@ -91,11 +128,10 @@ const CreateBetForm = () => {
             {objects.map((v) => {
               const regex = /0x2::coin::Coin<([^:]+)::[^:]+::([^>]+)>/;
               const match = v.data.content.type.match(regex);
-              const hash = match?.[1] || '';
               const type = match?.[2] || '';
 
               return (
-                <Option key={v.data.objectId} value={hash}>
+                <Option key={v.data.objectId} value={v.data.objectId}>
                   {type}
                 </Option>
               );

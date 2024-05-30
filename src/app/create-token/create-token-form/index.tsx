@@ -74,7 +74,7 @@ const CreateTokenForm = () => {
         requestType: 'WaitForEffectsCert',
       });
 
-      const explorerLink = `https://suiscan.xyz/testnet/tx/${tx.digest}`;
+      const explorerLink = `https://testnet.suivision.xyz/txblock/${tx.digest}`;
       setTxResult(explorerLink);
     } catch (err) {
       console.log(err);

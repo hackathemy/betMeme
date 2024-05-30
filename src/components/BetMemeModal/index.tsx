@@ -58,7 +58,7 @@ const BetMemeModal: React.FC<IBetMemeModalProps> = ({ betValue, modalView, onClo
         requestType: 'WaitForEffectsCert',
       });
 
-      const explorerLink = `https://suiscan.xyz/testnet/tx/${tx.digest}`;
+      const explorerLink = `https://testnet.suivision.xyz/txblock/${tx.digest}`;
       console.log(explorerLink);
     } catch (e) {
       console.error(e);
