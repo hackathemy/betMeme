@@ -1,7 +1,8 @@
 import { useCurrentAccount, useSignTransactionBlock, useSuiClientQuery } from '@mysten/dapp-kit';
 import { getFullnodeUrl, SuiClient } from '@mysten/sui.js/client';
-import { useMemo, useState } from 'react';
+import { useState } from 'react';
 
+import { Option, Select } from '@mui/joy';
 import styles from './index.module.scss';
 import InputBox from '@/components/Common/InputBox';
 import Button from '@/components/Common/Button';
@@ -16,11 +17,10 @@ const CreateBetForm = () => {
   const signTransactionBlock = useSignTransactionBlock();
   const currentAccount = useCurrentAccount();
   const objects = useMakeObjects(currentAccount?.address || '');
-  console.log('!!!', objects);
 
   const [loading, setLoading] = useState(false);
   const [coinId, setCoinId] = useState('');
-  const [duration, setDuration] = useState('');
+  const [duration, setDuration] = useState('3600');
   const [txResult, setTxResult] = useState('');
 
   const createBet = async () => {
@@ -30,9 +30,7 @@ const CreateBetForm = () => {
       if (!currentAccount) return;
 
       const txb = new TransactionBlock();
-      const [coin] = txb.splitCoins(txb.object('0x656932ae2de32edc175e635a13014e341a2c222a6d1cd1fa357b85112eaf69cf'), [
-        txb.pure(10 * 1000000000),
-      ]);
+      const [coin] = txb.splitCoins(txb.object(coinId), [txb.pure(10 * 1000000000)]);
       txb.setGasBudget(10000000);
       txb.moveCall({
         target: `0x14832e50d21c6d6083995e85bb08be0dac26fa9f5ce2af3a0df1d1e9fe825361::betmeme::create`,
@@ -69,17 +67,41 @@ const CreateBetForm = () => {
     }
   };
 
+  const handleChange = (event: React.SyntheticEvent | null, value: string | null) => {
+    event?.preventDefault();
+
+    if (value) {
+      setCoinId(value);
+    }
+  };
+
   return (
     <form className={styles.container}>
       <h1>Create Bet</h1>
       <div className={styles.inputContainer}>
-        <InputBox
-          title="Coin"
-          placeholder="Coin Object Id"
-          value={coinId}
-          onChange={(val) => setCoinId(val.target.value || '')}
-          required={true}
-        />
+        <div className={styles.selectContainer}>
+          <div className={styles.selectTitle}>Coin</div>
+          <Select
+            className={styles.selectContent}
+            placeholder="Choose coin"
+            size="md"
+            variant="solid"
+            onChange={handleChange}
+          >
+            {objects.map((v) => {
+              const regex = /0x2::coin::Coin<([^:]+)::[^:]+::([^>]+)>/;
+              const match = v.data.content.type.match(regex);
+              const hash = match?.[1] || '';
+              const type = match?.[2] || '';
+
+              return (
+                <Option className={styles.selectOption} key={v.data.objectId} value={hash}>
+                  {type}
+                </Option>
+              );
+            })}
+          </Select>
+        </div>
         <InputBox
           title="Duration"
           placeholder="Duration"

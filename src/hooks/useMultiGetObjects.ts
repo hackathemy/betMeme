@@ -16,7 +16,6 @@ export default function useMultiGetObjects(address: string[]) {
         showType: true,
       };
 
-      console.log(address);
       const event = [address, options];
 
       const getValidators = {

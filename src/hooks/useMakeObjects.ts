@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import { useEffect, useMemo } from 'react';
 import useOwnedObjects from './useOwnedObjects';
 import useMultiGetObjects from './useMultiGetObjects';
 
@@ -9,11 +9,26 @@ export default function useMakeObjects(address: string) {
     if (!ownedObjectsData) {
       return [];
     }
-
     return ownedObjectsData.map((v) => v.data?.objectId);
-  }, [address, ownedObjectsData]);
+  }, [ownedObjectsData]);
 
-  const { data: objects } = useMultiGetObjects(objectAddresses);
+  const { data: objects, refetch } = useMultiGetObjects(objectAddresses);
 
-  return objects;
+  useEffect(() => {
+    if (objectAddresses.length > 0) {
+      refetch();
+    }
+  }, [objectAddresses, refetch]);
+
+  const makeCoinAmount = useMemo(() => {
+    if (!objects) {
+      return [];
+    }
+    const tokens = objects.filter((object) => {
+      return object.data?.content?.type.startsWith('0x2::coin::Coin');
+    });
+    return tokens;
+  }, [objects]);
+
+  return makeCoinAmount;
 }
