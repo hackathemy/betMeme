@@ -17,7 +17,7 @@ export default function useOwnedObjects(address: string) {
 
       const response = await axios.post('https://fullnode.testnet.sui.io', getValidators);
 
-      return response.data;
+      return response.data.result.data || [];
     },
   });
 }

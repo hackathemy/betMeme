@@ -25,13 +25,11 @@ const BetMemeModal: React.FC<IBetMemeModalProps> = ({ betValue, modalView, onClo
 
   const [betAmount, setBetAmount] = useState('');
 
-  const betting = async (direction: string) => {
+  const betting = async (direction: boolean) => {
     try {
       if (!currentAccount) {
         return;
       }
-
-      console.log(direction);
 
       const txb = new TransactionBlock();
       const [coin] = txb.splitCoins(txb.object('0x5ebcbb21d0fc805fd0cab535550e032e557285d498b3a55ac50416843966c5f7'), [
@@ -44,7 +42,7 @@ const BetMemeModal: React.FC<IBetMemeModalProps> = ({ betValue, modalView, onClo
         arguments: [
           txb.pure('0xace1d297d3610a46f351416200078988376951dfa0614256f58006134d1ad2b2'),
           txb.pure('0x6'),
-          txb.pure(true),
+          txb.pure(direction),
           coin,
         ],
       });
@@ -95,13 +93,13 @@ const BetMemeModal: React.FC<IBetMemeModalProps> = ({ betValue, modalView, onClo
             styled={styles.button}
             name={`Pray for 🔺 UP`}
             disabled={betValue.isEnd}
-            onClick={() => betting('up')}
+            onClick={() => betting(true)}
           />
           <Button
             styled={styles.button}
             name={`Pray for 🔻 Down`}
             disabled={betValue.isEnd}
-            onClick={() => betting('down')}
+            onClick={() => betting(false)}
           />
         </div>
       </>
