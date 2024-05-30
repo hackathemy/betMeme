@@ -93,7 +93,7 @@ const CreateTokenForm = () => {
 
   return (
     <form className={styles.container}>
-      <h1>Coin Generator</h1>
+      <h1>Create Token</h1>
       <div className={styles.inputContainer}>
         <InputBox
           title="Name"

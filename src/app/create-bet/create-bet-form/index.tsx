@@ -95,7 +95,7 @@ const CreateBetForm = () => {
               const type = match?.[2] || '';
 
               return (
-                <Option className={styles.selectOption} key={v.data.objectId} value={hash}>
+                <Option key={v.data.objectId} value={hash}>
                   {type}
                 </Option>
               );
