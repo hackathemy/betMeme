@@ -27,7 +27,7 @@ const CreateBetForm = () => {
       if (!currentAccount) return;
 
       const txb = new TransactionBlock();
-      const [coin] = txb.splitCoins(txb.object('0x78e825662b91f620d86f1bce890b5414123f922ea0044cc8da1898cbb3f8fcd4'), [
+      const [coin] = txb.splitCoins(txb.object('0x5ebcbb21d0fc805fd0cab535550e032e557285d498b3a55ac50416843966c5f7'), [
         txb.pure(10 * 1000000000),
       ]);
       txb.setGasBudget(10000000);

@@ -19,7 +19,7 @@ export default function Home() {
   });
   const currentAccount = useCurrentAccount();
   const { data, isPending, error } = useSuiClientQuery('getObject', {
-    id: '0x9ad0d5055aa29850d9b52a07ad7b5531bc3930403142708752434b74ef1ad1d2',
+    id: '0xace1d297d3610a46f351416200078988376951dfa0614256f58006134d1ad2b2',
     options: {
       showType: true,
       showOwner: true,
@@ -29,7 +29,7 @@ export default function Home() {
     },
   });
 
-  console.log(data);
+  console.log(data?.data?.content?.fields);
   return (
     <Wrapper>
       <div>
