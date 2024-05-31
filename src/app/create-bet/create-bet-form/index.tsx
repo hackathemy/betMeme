@@ -21,7 +21,6 @@ const CreateBetForm = () => {
   const objects = useMakeObjects(currentAccount?.address || '');
 
   const [loading, setLoading] = useState(false);
-  const [txDigest, setTxDigest] = useState('');
   const [coinId, setCoinId] = useState('');
   const [coinType, setCoinType] = useState('');
   const [duration, setDuration] = useState<number>();
@@ -34,7 +33,6 @@ const CreateBetForm = () => {
     try {
       setLoading(true);
 
-      console.log(coinType, coinId);
       if (!basePrize || !duration || !minAmount) {
         return;
       }
@@ -75,6 +73,7 @@ const CreateBetForm = () => {
         title: 'Fud the Pug',
         object: objectId,
         denom: coinType,
+        startPrice: '0.000000265',
       };
 
       await pb.collection('betmemes').create(collection);

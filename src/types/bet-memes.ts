@@ -3,4 +3,5 @@ export interface IBetMemesProps {
   title: string;
   denom: string;
   object: string;
+  startPrice: string;
 }

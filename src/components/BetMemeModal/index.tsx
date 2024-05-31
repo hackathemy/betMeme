@@ -95,7 +95,7 @@ const BetMemeModal: React.FC<IBetMemeModalProps> = ({ betValue, betData, modalVi
               Down<div className={styles.downAmount}>{betData.downAmount}</div>
             </div>
             <div className={styles.amountInput}>
-              <div className={styles.amountPrice}>Budget: {123}</div>
+              <div className={styles.amountPrice}>Balance: {123}</div>
               <InputBox
                 title="Bet Amount"
                 placeholder="How much?"
