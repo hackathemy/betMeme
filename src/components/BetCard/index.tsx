@@ -154,13 +154,11 @@ const BetCard = ({ betValue }: IBetCardProps) => {
                 Bet Up:
                 <div>
                   {numberWithCommas(betData.upAmount / DECIMAL_UNIT)} {getToken(betValue.denom)} ( win to{' '}
-                  {Number(
-                    numberWithCommas(
-                      betData.upAmount / DECIMAL_UNIT +
-                        (betData.downAmount / DECIMAL_UNIT) * 0.7 +
-                        Number(betData.prizeBalance) / DECIMAL_UNIT,
-                    ),
-                  ).toFixed(0)}{' '}
+                  {numberWithCommas(
+                    betData.upAmount / DECIMAL_UNIT +
+                      (betData.downAmount / DECIMAL_UNIT) * 0.7 +
+                      Number(betData.prizeBalance) / DECIMAL_UNIT,
+                  )}{' '}
                   {getToken(betValue.denom)} )
                 </div>
               </div>
@@ -168,13 +166,11 @@ const BetCard = ({ betValue }: IBetCardProps) => {
                 Bet Down:
                 <div>
                   {numberWithCommas(betData.downAmount / DECIMAL_UNIT)} {getToken(betValue.denom)} ( win to{' '}
-                  {Number(
-                    numberWithCommas(
-                      betData.downAmount / DECIMAL_UNIT +
-                        (betData.upAmount / DECIMAL_UNIT) * 0.7 +
-                        Number(betData.prizeBalance) / DECIMAL_UNIT,
-                    ),
-                  ).toFixed(0)}{' '}
+                  {numberWithCommas(
+                    betData.downAmount / DECIMAL_UNIT +
+                      (betData.upAmount / DECIMAL_UNIT) * 0.7 +
+                      Number(betData.prizeBalance) / DECIMAL_UNIT,
+                  )}{' '}
                   {getToken(betValue.denom)} )
                 </div>
               </div>
