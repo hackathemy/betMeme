@@ -32,6 +32,7 @@ const BetCard = ({ betValue, price }: IBetCardProps) => {
 
   const pricePercentage = useMemo(() => {
     if (betData) {
+      // TODO: markedPrice가 제대로 들어오면 다시 확인해 봐야 함 지금은 1이라서 애매
       // const precent = (1 - Number(betData?.markedPrice) / DECIMAL_UNIT / Number(price)) * 100;
       const precent = (1 - 0.0000002688 / Number(price)) * 100;
       return precent;
