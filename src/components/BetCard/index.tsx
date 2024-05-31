@@ -43,7 +43,11 @@ const BetCard = ({ betValue }: IBetCardProps) => {
       txb.moveCall({
         target: `${process.env.NEXT_PUBLIC_PACKAGE_ID}::betmeme::gameEnd`,
         typeArguments: [betValue.denom],
-        arguments: [txb.pure(betValue.object), txb.pure('0x6'), txb.pure(1)],
+        arguments: [
+          txb.pure(betValue.object),
+          txb.pure('0x6'),
+          txb.pure((Number(getPrice(betValue.denom)) * DECIMAL_UNIT).toFixed(0)),
+        ],
       });
 
       const { signature, transactionBlockBytes } = await signTransactionBlock.mutateAsync({
@@ -120,12 +124,12 @@ const BetCard = ({ betValue }: IBetCardProps) => {
               {betValue.title} 🦇 ${(betData.markedPrice / DECIMAL_UNIT).toFixed(10)}
             </div>
             <div className={styles.lockedContainer}>
-              Current Price
+              {nowStatus === 'expired' && betData?.lastPrice > 0 ? <>Final Price</> : <>Current Price</>}
               <div className={styles.betResult}>
                 {nowStatus === 'expired' && betData?.lastPrice > 0 ? (
                   <>
                     <>${Number(betData?.lastPrice / DECIMAL_UNIT).toFixed(10)}</>
-                    {betData?.lastPrice - betData?.markedPrice ? (
+                    {betData?.lastPrice - betData?.markedPrice > 0 ? (
                       <div className={clsx(styles.betPercent, styles.isPlus)}>Up Win !</div>
                     ) : (
                       <div className={clsx(styles.betPercent)}>Down Win !</div>
@@ -150,11 +154,13 @@ const BetCard = ({ betValue }: IBetCardProps) => {
                 Bet Up:
                 <div>
                   {numberWithCommas(betData.upAmount / DECIMAL_UNIT)} {getToken(betValue.denom)} ( win to{' '}
-                  {numberWithCommas(
-                    betData.upAmount / DECIMAL_UNIT +
-                      (betData.downAmount / DECIMAL_UNIT) * 0.7 +
-                      Number(betData.prizeBalance) / DECIMAL_UNIT,
-                  )}{' '}
+                  {Number(
+                    numberWithCommas(
+                      betData.upAmount / DECIMAL_UNIT +
+                        (betData.downAmount / DECIMAL_UNIT) * 0.7 +
+                        Number(betData.prizeBalance) / DECIMAL_UNIT,
+                    ),
+                  ).toFixed(0)}{' '}
                   {getToken(betValue.denom)} )
                 </div>
               </div>
@@ -162,11 +168,13 @@ const BetCard = ({ betValue }: IBetCardProps) => {
                 Bet Down:
                 <div>
                   {numberWithCommas(betData.downAmount / DECIMAL_UNIT)} {getToken(betValue.denom)} ( win to{' '}
-                  {numberWithCommas(
-                    betData.downAmount / DECIMAL_UNIT +
-                      (betData.upAmount / DECIMAL_UNIT) * 0.7 +
-                      Number(betData.prizeBalance) / DECIMAL_UNIT,
-                  )}{' '}
+                  {Number(
+                    numberWithCommas(
+                      betData.downAmount / DECIMAL_UNIT +
+                        (betData.upAmount / DECIMAL_UNIT) * 0.7 +
+                        Number(betData.prizeBalance) / DECIMAL_UNIT,
+                    ),
+                  ).toFixed(0)}{' '}
                   {getToken(betValue.denom)} )
                 </div>
               </div>

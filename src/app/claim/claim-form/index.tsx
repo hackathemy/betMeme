@@ -12,7 +12,7 @@ import clsx from 'clsx';
 import GoodIconPNG from '@/assets/icons/common/GoodIcon.png';
 import BadIconPNG from '@/assets/icons/common/BadIcon.png';
 import { numberWithCommas } from '@/utils/formatNumber';
-import { getPrice } from '@/utils/makePrice';
+import { getPrice, getToken } from '@/utils/makePrice';
 
 interface IClaimForm {
   value: any;
@@ -58,7 +58,7 @@ const ClaimForm = ({ value }: IClaimForm) => {
     } else {
       txb.moveCall({
         target: `${process.env.NEXT_PUBLIC_PACKAGE_ID}::betmeme::${type}`,
-        typeArguments: ['0xfef07a737803d73c50a3c8fc61b88fa2f8893801a51f7b49c6d203b207906231::fud::FUD'],
+        typeArguments: [getPbData?.denom || ''],
         arguments: [txb.object(`${userBet.data.content.fields.gameId}`), txb.pure(`${userBet.data.objectId}`)],
       });
     }
@@ -104,9 +104,10 @@ const ClaimForm = ({ value }: IClaimForm) => {
     return 'live';
   }, [objectData]);
 
+  const price = getPrice(getPbData?.denom || '');
   const isPriceUp = useMemo(() => {
     if (nowStatus !== 'expired' && getPbData) {
-      return Number(getPrice(getPbData.denom)) > Number(getPbData.startPrice);
+      return Number(price) > Number(getPbData.startPrice);
     }
 
     return false;
@@ -137,13 +138,16 @@ const ClaimForm = ({ value }: IClaimForm) => {
   }, [isPriceUp, getPbData]);
 
   const pricePercentage = useMemo(() => {
-    const precent = (1 - Number(getPbData?.startPrice) / Number(getPrice(getPbData?.denom || ''))) * 100;
-    return precent;
+    const percent =
+      ((Number(price) - Number(objectData?.markedPrice / DECIMAL_UNIT)) /
+        Number(objectData?.markedPrice / DECIMAL_UNIT)) *
+      100;
+
+    return percent;
   }, [isPriceUp, getPbData]);
 
   const gameResult = useMemo(() => {
     const result = Number(objectData?.lastPrice) / DECIMAL_UNIT - Number(objectData?.markedPrice) / DECIMAL_UNIT;
-
     const a = () => {
       if (result > 0) {
         return true;
@@ -188,18 +192,21 @@ const ClaimForm = ({ value }: IClaimForm) => {
               Bet Status<div>{content.fields.betUp ? <div>Up</div> : <div>Down</div>}</div>
             </div>
             <div className={styles.betList}>
-              Bet Amount<div>{numberWithCommas(Number(content.fields.amount) / DECIMAL_UNIT)} FUD</div>
+              Bet Amount
+              <div>
+                {numberWithCommas(Number(content.fields.amount) / DECIMAL_UNIT)} {getToken(getPbData?.denom || '')}
+              </div>
             </div>
-            {nowStatus !== 'expired' && (
+            {objectData?.lastPrice <= 0 && (
               <>
                 <div className={styles.priceWrapper}>
                   <div className={styles.priceContainer}>
                     <div className={styles.priceTitle}>Start Price</div>
-                    <div>{getPbData?.startPrice || '0.00'}</div>
+                    <div>{Number(objectData?.markedPrice / DECIMAL_UNIT).toFixed(10)}</div>
                   </div>
                   <div className={styles.priceContainer}>
                     <div className={styles.priceTitle}>Current Price</div>
-                    <div>{getPrice(getPbData?.denom || '')}</div>
+                    <div>{price}</div>
                   </div>
                 </div>
                 <div className={clsx(styles.percentage, pricePercentage > 0 && styles.isPlus)}>
@@ -210,10 +217,10 @@ const ClaimForm = ({ value }: IClaimForm) => {
           </div>
           <div className={styles.buttons}>
             {/* 아직 진행중, 클레임, 챌린지 중에 한 상태만 있으면 됨 */}
-            {nowStatus === 'expired' && (
+            {nowStatus === 'expired' && objectData?.lastPrice > 0 && (
               <>
-                {gameResult === 'win' && <button onClick={() => claim('claim', value)}>claim</button>}
-                {gameResult === 'lose' && <button onClick={() => claim('callenge', value)}>challenge</button>}
+                {gameResult === 'win' && <button onClick={() => claim('claim', value)}>Claim</button>}
+                {gameResult === 'lose' && <button onClick={() => claim('callenge', value)}>Challenge</button>}
               </>
             )}
           </div>

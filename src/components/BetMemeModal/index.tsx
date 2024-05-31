@@ -44,7 +44,7 @@ const BetMemeModal: React.FC<IBetMemeModalProps> = ({ betValue, betData, modalVi
   });
 
   const betTargetPrice = useMemo(() => {
-    const content: any = coins?.[0].data?.content;
+    const content: any = coins?.[0]?.data?.content;
 
     return content?.fields.balance || '0';
   }, [coins]);
