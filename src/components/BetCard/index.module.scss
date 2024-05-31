@@ -27,7 +27,7 @@
   justify-content: space-between;
 
   width: 400px;
-  height: 330px;
+  height: 380px;
   padding: 20px;
   border-radius: 10px;
   backdrop-filter: blur(30px);
@@ -153,12 +153,12 @@
 
     &.up {
       background-color: #15ae62;
-      border-radius: 10px 0 0 10px;
+      border-radius: 2rem;
     }
 
     &.down {
       background-color: #ae1515;
-      border-radius: 0 10px 10px 0;
+      border-radius: 2rem;
     }
 
     &.priceWin {
@@ -169,4 +169,12 @@
 
 .button {
   background-color: rgb(41, 41, 41, 0.5);
+}
+
+.checkButton {
+  background-color: rgba(240, 28, 201, 0.5);
+}
+
+.betButton {
+  background-color: rgba(14, 101, 231, 0.942);
 }

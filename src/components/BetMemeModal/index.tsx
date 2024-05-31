@@ -13,6 +13,7 @@ import clsx from 'clsx';
 import IncreaseIconPNG from '@/assets/icons/common/IncreaseIcon.png';
 import DecreaseIconPNG from '@/assets/icons/common/DecreaseIcon.png';
 import { numberWithCommas } from '@/utils/formatNumber';
+import { getImage, getToken } from '@/utils/makePrice';
 
 interface IBetMemeModalProps {
   betValue: IBetMemesProps;
@@ -95,15 +96,20 @@ const BetMemeModal: React.FC<IBetMemeModalProps> = ({ betValue, betData, modalVi
         <div className={styles.container}>
           <div>
             <div className={styles.betStatus}>
-              Up<div className={styles.upAmount}>{numberWithCommas(Number(betData.upAmount) / DECIMAL_UNIT)} FUD</div>
+              Up
+              <div className={styles.upAmount}>
+                {numberWithCommas(Number(betData.upAmount) / DECIMAL_UNIT)} {getToken(betValue.denom)}
+              </div>
             </div>
             <div className={styles.betStatus}>
               Down
-              <div className={styles.downAmount}>{numberWithCommas(Number(betData.downAmount) / DECIMAL_UNIT)} FUD</div>
+              <div className={styles.downAmount}>
+                {numberWithCommas(Number(betData.downAmount) / DECIMAL_UNIT)} {getToken(betValue.denom)}
+              </div>
             </div>
             <div className={styles.amountInput}>
               <div className={styles.amountPrice}>
-                Balance: {numberWithCommas(Number(betTargetPrice) / DECIMAL_UNIT)} FUD
+                Balance: {numberWithCommas(Number(betTargetPrice) / DECIMAL_UNIT)} {getToken(betValue.denom)}
               </div>
               <div className={styles.inputContainer}>
                 <input
@@ -112,11 +118,7 @@ const BetMemeModal: React.FC<IBetMemeModalProps> = ({ betValue, betData, modalVi
                   value={betAmount}
                   onChange={(val) => setBetAmount(val.target.value || '')}
                 />
-                <img
-                  src="https://assets.coingecko.com/coins/images/33610/standard/pug-head.png"
-                  alt="fud the pug"
-                  className={styles.tokenImg}
-                />
+                <img src={getImage(betValue.denom)} alt="fud the pug" className={styles.tokenImg} />
                 <div className={styles.amountText}>Amount</div>
               </div>
             </div>

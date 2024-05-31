@@ -21,26 +21,15 @@ export default function Claim() {
     },
   });
 
-  const [pudPrice, setPudPrice] = useState('0.0000002688');
-
-  useEffect(() => {
-    const intervalId = setInterval(() => {
-      const randomValue = getRandomBetween(pudMinValue, pudMaxValue);
-      setPudPrice(randomValue);
-    }, 5000);
-
-    return () => clearInterval(intervalId);
-  }, []);
-
   return (
     <Wrapper>
       <div className={styles.container}>
-        <h1>claim page</h1>
+        <h1>My Bet</h1>
         <div className={styles.cardWrapper}>
           {data?.data
             .filter((d) => d.data?.type?.includes('UserBet'))
             .map((d: any) => {
-              return <ClaimForm key={d.data?.digest} value={d} price={pudPrice} />;
+              return <ClaimForm key={d.data?.digest} value={d} />;
             })}
         </div>
       </div>

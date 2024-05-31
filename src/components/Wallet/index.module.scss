@@ -7,3 +7,17 @@
   overflow: hidden;
   text-overflow: ellipsis;
 }
+
+.headerContent {
+  position: relative;
+
+  padding: 0.9rem;
+  padding-right: 1rem;
+  padding-left: 1rem;
+  border-radius: 2rem;
+  margin-left: 0.3rem;
+
+  color: #fff;
+
+  background-color: #3692d4;
+}

@@ -12,13 +12,13 @@ import clsx from 'clsx';
 import GoodIconPNG from '@/assets/icons/common/GoodIcon.png';
 import BadIconPNG from '@/assets/icons/common/BadIcon.png';
 import { numberWithCommas } from '@/utils/formatNumber';
+import { getPrice } from '@/utils/makePrice';
 
 interface IClaimForm {
   value: any;
-  price: string;
 }
 
-const ClaimForm = ({ value, price }: IClaimForm) => {
+const ClaimForm = ({ value }: IClaimForm) => {
   const content = value.data?.content;
   const gameId = value.data?.content.fields.gameId;
 
@@ -48,7 +48,7 @@ const ClaimForm = ({ value, price }: IClaimForm) => {
     if (type === 'claim') {
       txb.moveCall({
         target: `${process.env.NEXT_PUBLIC_PACKAGE_ID}::betmeme::${type}`,
-        typeArguments: ['0xfef07a737803d73c50a3c8fc61b88fa2f8893801a51f7b49c6d203b207906231::fud::FUD'],
+        typeArguments: [getPbData?.denom || ''],
         arguments: [
           txb.object(`${userBet.data.content.fields.gameId}`),
           txb.pure(`${userBet.data.objectId}`),
@@ -106,11 +106,11 @@ const ClaimForm = ({ value, price }: IClaimForm) => {
 
   const isPriceUp = useMemo(() => {
     if (nowStatus !== 'expired' && getPbData) {
-      return Number(price) > Number(getPbData.startPrice);
+      return Number(getPrice(getPbData.denom)) > Number(getPbData.startPrice);
     }
 
     return false;
-  }, [nowStatus, getPbData, price]);
+  }, [nowStatus, getPbData]);
 
   const returnStatus = useMemo(() => {
     if (nowStatus !== 'expired') {
@@ -134,12 +134,12 @@ const ClaimForm = ({ value, price }: IClaimForm) => {
         </div>
       );
     }
-  }, [isPriceUp, getPbData, price]);
+  }, [isPriceUp, getPbData]);
 
   const pricePercentage = useMemo(() => {
-    const precent = (1 - Number(getPbData?.startPrice) / Number(price)) * 100;
+    const precent = (1 - Number(getPbData?.startPrice) / Number(getPrice(getPbData?.denom || ''))) * 100;
     return precent;
-  }, [isPriceUp, getPbData, price]);
+  }, [isPriceUp, getPbData]);
 
   const gameResult = useMemo(() => {
     const result = Number(objectData?.lastPrice) / DECIMAL_UNIT - Number(objectData?.markedPrice) / DECIMAL_UNIT;
@@ -168,7 +168,7 @@ const ClaimForm = ({ value, price }: IClaimForm) => {
             {nowStatus === 'expired' && (
               <>
                 <p className={styles.expiredStatus}>
-                  <div>{gameResult === 'win' ? 'Winner' : 'Loser'}</div> Price
+                  <div>{gameResult === 'win' ? 'Winner' : 'Loser'}</div>
                 </p>
                 {gameResult === 'win' ? (
                   <LottieContainer lottieData={TrophyLottie} className={styles.lottie} />
@@ -199,7 +199,7 @@ const ClaimForm = ({ value, price }: IClaimForm) => {
                   </div>
                   <div className={styles.priceContainer}>
                     <div className={styles.priceTitle}>Current Price</div>
-                    <div>{price}</div>
+                    <div>{getPrice(getPbData?.denom || '')}</div>
                   </div>
                 </div>
                 <div className={clsx(styles.percentage, pricePercentage > 0 && styles.isPlus)}>

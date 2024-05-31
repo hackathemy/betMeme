@@ -25,7 +25,7 @@ export default function useMakeObjects(address: string) {
       return [];
     }
     const tokens = objects.filter((object) => {
-      return object.data?.content?.type.startsWith('0x2::coin::Coin');
+      return object.data?.content?.type.startsWith('0x2::coin::Coin') && object.data?.content?.type.indexOf('SUI') < 0;
     });
     return tokens;
   }, [objects]);

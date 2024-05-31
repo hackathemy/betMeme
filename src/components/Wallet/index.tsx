@@ -12,7 +12,7 @@ const ConnectWallet: React.FC = () => {
   const [open, setOpen] = useState(false);
 
   return (
-    <div>
+    <div className={styles.headerContent}>
       {currentAccount ? (
         <button className={styles.disconnectWalletBtn} onClick={() => disconnect()}>
           <div className={styles.disconnectWallet}>{currentAccount?.address}</div>

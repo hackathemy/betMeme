@@ -4,16 +4,18 @@ import Button from '../Common/Button';
 import clsx from 'clsx';
 import { useMemo, useState } from 'react';
 import BetMemeModal from '../BetMemeModal';
-import { useSuiClientQuery } from '@mysten/dapp-kit';
-import { DECIMAL_UNIT, RESULT_DURATION } from '@/constant';
+import { useCurrentAccount, useSignTransactionBlock, useSuiClientQuery } from '@mysten/dapp-kit';
+import { DECIMAL_UNIT, GAS_BUDGET, RESULT_DURATION } from '@/constant';
 import { numberWithCommas } from '@/utils/formatNumber';
+import { SuiClient, getFullnodeUrl } from '@mysten/sui.js/client';
+import { TransactionBlock } from '@mysten/sui.js/transactions';
+import { getImage, getPrice, getToken } from '@/utils/makePrice';
 
 interface IBetCardProps {
   betValue: IBetMemesProps;
-  price: string;
 }
 
-const BetCard = ({ betValue, price }: IBetCardProps) => {
+const BetCard = ({ betValue }: IBetCardProps) => {
   const [modalView, setModalView] = useState(false);
 
   const { data, isPending, error } = useSuiClientQuery('getObject', {
@@ -26,20 +28,56 @@ const BetCard = ({ betValue, price }: IBetCardProps) => {
       showContent: true,
     },
   });
+  const client = new SuiClient({
+    url: getFullnodeUrl('testnet'),
+  });
+  const signTransactionBlock = useSignTransactionBlock();
+  const currentAccount = useCurrentAccount();
+
+  const updateLastPrice = async () => {
+    try {
+      if (!currentAccount) return;
+
+      const txb = new TransactionBlock();
+      txb.setGasBudget(GAS_BUDGET);
+      txb.moveCall({
+        target: `${process.env.NEXT_PUBLIC_PACKAGE_ID}::betmeme::gameEnd`,
+        typeArguments: [betValue.denom],
+        arguments: [txb.pure(betValue.object), txb.pure('0x6'), txb.pure(1)],
+      });
+
+      const { signature, transactionBlockBytes } = await signTransactionBlock.mutateAsync({
+        transactionBlock: txb,
+        account: currentAccount,
+      });
+
+      const tx = await client.executeTransactionBlock({
+        signature,
+        transactionBlock: transactionBlockBytes,
+        requestType: 'WaitForEffectsCert',
+      });
+      window.location.reload();
+    } catch (err) {
+      console.log(err);
+    }
+  };
 
   const content: any = data?.data?.content;
   const betData = content?.fields;
-
+  const price = getPrice(betValue.denom);
   const pricePercentage = useMemo(() => {
     if (betData) {
       // TODO: markedPrice가 제대로 들어오면 다시 확인해 봐야 함 지금은 1이라서 애매
       // const precent = (1 - Number(betData?.markedPrice) / DECIMAL_UNIT / Number(price)) * 100;
-      const precent = (1 - 0.0000002688 / Number(price)) * 100;
-      return precent;
+      const percent =
+        ((Number(price) - Number(betData.markedPrice / DECIMAL_UNIT)) / Number(betData.markedPrice / DECIMAL_UNIT)) *
+        100;
+
+      return percent;
     }
 
     return 0;
-  }, [betData, price]);
+  }, [betData]);
 
   if (isPending || error) return <div>Loading...</div>;
 
@@ -72,28 +110,26 @@ const BetCard = ({ betValue, price }: IBetCardProps) => {
               {nowStatus === 'expired'
                 ? ''
                 : nowStatus === 'next'
-                  ? `${remainResult.toFixed(0)} min`
-                  : `${remain.toFixed(0)} min`}
+                  ? `( ${remainResult.toFixed(0)} min remain )`
+                  : `( ${remain.toFixed(0)} min remain )`}
             </div>
           </div>
           <div>
             <div className={styles.betInfo}>
-              <img
-                src="https://assets.coingecko.com/coins/images/33610/standard/pug-head.png"
-                alt="fud the pug"
-                className={styles.tokenImg}
-              />
-              {betValue.title}
+              <img src={getImage(betValue.denom)} alt="img" className={styles.tokenImg} />
+              {betValue.title} 🦇 ${(betData.markedPrice / DECIMAL_UNIT).toFixed(10)}
             </div>
             <div className={styles.lockedContainer}>
-              Price
+              Current Price
               <div className={styles.betResult}>
-                {nowStatus === 'expired' ? (
+                {nowStatus === 'expired' && betData?.lastPrice > 0 ? (
                   <>
-                    Marked ${(Number(betData?.markedPrice) / DECIMAL_UNIT).toFixed(9)}
-                    <div className={clsx(styles.betPercent, styles.endPercent)}>
-                      Last ${(Number(betData?.lastPrice) / DECIMAL_UNIT).toFixed(2)}
-                    </div>
+                    <>${Number(betData?.lastPrice / DECIMAL_UNIT).toFixed(10)}</>
+                    {betData?.lastPrice - betData?.markedPrice ? (
+                      <div className={clsx(styles.betPercent, styles.isPlus)}>Up Win !</div>
+                    ) : (
+                      <div className={clsx(styles.betPercent)}>Down Win !</div>
+                    )}
                   </>
                 ) : (
                   <>
@@ -106,31 +142,62 @@ const BetCard = ({ betValue, price }: IBetCardProps) => {
               </div>
               <div className={styles.lockedAmount}>
                 Locked Pool:
-                <div>{numberWithCommas(lockedAmount)} FUD</div>
+                <div>
+                  {numberWithCommas(lockedAmount)} {getToken(betValue.denom)}
+                </div>
+              </div>
+              <div className={styles.lockedAmount}>
+                Bet Up:
+                <div>
+                  {numberWithCommas(betData.upAmount / DECIMAL_UNIT)} {getToken(betValue.denom)} ( win to{' '}
+                  {numberWithCommas(
+                    betData.upAmount / DECIMAL_UNIT +
+                      (betData.downAmount / DECIMAL_UNIT) * 0.7 +
+                      Number(betData.prizeBalance) / DECIMAL_UNIT,
+                  )}{' '}
+                  {getToken(betValue.denom)} )
+                </div>
+              </div>
+              <div className={styles.lockedAmount}>
+                Bet Down:
+                <div>
+                  {numberWithCommas(betData.downAmount / DECIMAL_UNIT)} {getToken(betValue.denom)} ( win to{' '}
+                  {numberWithCommas(
+                    betData.downAmount / DECIMAL_UNIT +
+                      (betData.upAmount / DECIMAL_UNIT) * 0.7 +
+                      Number(betData.prizeBalance) / DECIMAL_UNIT,
+                  )}{' '}
+                  {getToken(betValue.denom)} )
+                </div>
               </div>
               <div className={styles.lockedAmount}>
                 Prize Pool:
-                <div>{numberWithCommas(Number(betData.prizeAmount) / DECIMAL_UNIT)} FUD</div>
+                <div>
+                  {numberWithCommas(Number(betData.prizeBalance) / DECIMAL_UNIT)} {getToken(betValue.denom)}
+                </div>
               </div>
             </div>
           </div>
         </div>
         <div>
           {nowStatus === 'live' && (
-            <Button styled={styles.button} name="Let's Bet!!" onClick={() => setModalView(true)} />
+            <Button styled={styles.betButton} name="Let's Bet !" onClick={() => setModalView(true)} />
           )}
           {nowStatus === 'next' && (
             <div className={styles.betStatus}>
               <div className={clsx(styles.status, styles.up, pricePercentage > 0 && styles.priceWin)}>
-                Up {betData.upAmount}
+                [ Up ] Will be win
               </div>
               <div className={clsx(styles.status, styles.down, pricePercentage < 0 && styles.priceWin)}>
-                Down {betData.downAmount}
+                [ Down ] Will be win
               </div>
             </div>
           )}
-          {nowStatus === 'expired' && (
-            <Button styled={styles.button} name="End Bet" disabled={nowStatus === 'expired'} />
+          {nowStatus === 'expired' && Number(betData.lastPrice) === 0 && (
+            <Button styled={styles.checkButton} name="Check Price" onClick={() => updateLastPrice()} />
+          )}
+          {nowStatus === 'expired' && Number(betData.lastPrice) > 0 && (
+            <Button styled={styles.button} name="Finished" disabled={nowStatus === 'expired'} />
           )}
         </div>
       </div>

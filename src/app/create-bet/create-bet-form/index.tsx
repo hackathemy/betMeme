@@ -11,7 +11,7 @@ import { TransactionBlock } from '@mysten/sui.js/transactions';
 import { isEmpty } from 'lodash';
 import useMakeObjects from '@/hooks/useMakeObjects';
 import { DECIMAL_UNIT, GAS_BUDGET } from '@/constant';
-import { getRandomBetween, pudMaxValue, pudMinValue } from '@/utils/makePrice';
+import { getPrice } from '@/utils/makePrice';
 import { useRouter } from 'next/navigation';
 
 const CreateBetForm = () => {
@@ -29,15 +29,13 @@ const CreateBetForm = () => {
   const [coinType, setCoinType] = useState('');
   const [duration, setDuration] = useState<number>();
   const [minAmount, setMinAmount] = useState<number>();
-  const [markedPrice, setMarkedPrice] = useState<number>(1);
+  const [markedPrice, setMarkedPrice] = useState('');
   const [basePrize, setBasePrize] = useState<number>();
   const [txResult, setTxResult] = useState('');
 
   const createBet = async () => {
     try {
       setLoading(true);
-
-      const randomValue = getRandomBetween(pudMinValue, pudMaxValue);
 
       if (!basePrize || !duration || !minAmount) {
         return;
@@ -52,7 +50,7 @@ const CreateBetForm = () => {
         target: `${process.env.NEXT_PUBLIC_PACKAGE_ID}::betmeme::create`,
         typeArguments: [coinType],
         arguments: [
-          txb.pure(markedPrice),
+          txb.pure((Number(markedPrice) * DECIMAL_UNIT).toFixed(0)),
           txb.pure(duration * 1000),
           txb.pure(minAmount * DECIMAL_UNIT),
           txb.pure('0x6'),
@@ -75,11 +73,15 @@ const CreateBetForm = () => {
       });
 
       const objectId = tx.objectChanges?.filter((v) => v.type === 'created').map((v: any) => v.objectId)[0];
+
+      const regex = /([^:]+)::[^:]+::([^>]+)/;
+      const match = coinType.match(regex);
+      const type = match?.[2] || '';
       const collection = {
-        title: 'Fud the Pug',
+        title: type,
         object: objectId,
         denom: coinType,
-        startPrice: randomValue,
+        startPrice: markedPrice,
       };
 
       await pb.collection('betmemes').create(collection);
@@ -108,6 +110,7 @@ const CreateBetForm = () => {
       const match = value.content.type.match(regex);
       const type = match?.[1] || '';
       setCoinType(type);
+      setMarkedPrice(getPrice(type));
     }
   };
 
@@ -139,8 +142,8 @@ const CreateBetForm = () => {
           </Select>
         </div>
         <InputBox
-          title="Donate for Prize"
-          placeholder="Donate for Prize"
+          title="Prize"
+          placeholder="Prize Amount"
           value={basePrize || ''}
           onChange={(val) => setBasePrize(Number(val.target.value) || 0)}
           required={true}
@@ -163,7 +166,7 @@ const CreateBetForm = () => {
           title="Current Price"
           placeholder="Current Price"
           value={markedPrice || ''}
-          onChange={(val) => setMarkedPrice(Number(val.target.value) || 0)}
+          onChange={(val) => setMarkedPrice(val.target.value || '')}
           required={true}
           readonly={true}
         />
