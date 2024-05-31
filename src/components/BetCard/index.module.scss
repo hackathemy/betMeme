@@ -115,11 +115,19 @@
     font-size: 20px;
 
     .betPercent {
-      background-color: #15ae62;
+      background-color: #ae1515;
       padding: 10px 15px;
       border-radius: 5px;
 
       font-size: 15px;
+
+      &.isPlus {
+        background-color: #15ae62;
+      }
+
+      &.endPercent {
+        background-color: rgba(41, 41, 41);
+      }
     }
   }
 

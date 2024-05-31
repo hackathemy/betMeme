@@ -11,8 +11,12 @@ import { TransactionBlock } from '@mysten/sui.js/transactions';
 import { isEmpty } from 'lodash';
 import useMakeObjects from '@/hooks/useMakeObjects';
 import { DECIMAL_UNIT, GAS_BUDGET } from '@/constant';
+import { getRandomBetween, pudMaxValue, pudMinValue } from '@/utils/makePrice';
+import { useRouter } from 'next/navigation';
 
 const CreateBetForm = () => {
+  const router = useRouter();
+
   const client = new SuiClient({
     url: getFullnodeUrl('testnet'),
   });
@@ -32,6 +36,8 @@ const CreateBetForm = () => {
   const createBet = async () => {
     try {
       setLoading(true);
+
+      const randomValue = getRandomBetween(pudMinValue, pudMaxValue);
 
       if (!basePrize || !duration || !minAmount) {
         return;
@@ -73,12 +79,11 @@ const CreateBetForm = () => {
         title: 'Fud the Pug',
         object: objectId,
         denom: coinType,
-        startPrice: '0.000000265',
+        startPrice: randomValue,
       };
 
       await pb.collection('betmemes').create(collection);
-      const explorerLink = `https://testnet.suivision.xyz/txblock/${tx.digest}`;
-      setTxResult(explorerLink);
+      router.replace('/');
     } catch (e) {
       console.error(e);
     } finally {

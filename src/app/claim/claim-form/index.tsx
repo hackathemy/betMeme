@@ -1,15 +1,17 @@
 import LottieContainer from '@/components/Common/Lottie';
 import styles from './index.module.scss';
 import TrophyLottie from '@/assets/icons/lottie/TrophyLottie.json';
+import GiftLottie from '@/assets/icons/lottie/GiftLottie.json';
 import { SuiClient, getFullnodeUrl } from '@mysten/sui.js/client';
 import { useCurrentAccount, useSignTransactionBlock, useSuiClientQuery } from '@mysten/dapp-kit';
 import { TransactionBlock } from '@mysten/sui.js/transactions';
 import { useMemo } from 'react';
-import { RESULT_DURATION } from '@/constant';
+import { DECIMAL_UNIT, RESULT_DURATION } from '@/constant';
 import useBetMemeList from '@/hooks/useBetMemeList';
 import clsx from 'clsx';
 import GoodIconPNG from '@/assets/icons/common/GoodIcon.png';
 import BadIconPNG from '@/assets/icons/common/BadIcon.png';
+import { numberWithCommas } from '@/utils/formatNumber';
 
 interface IClaimForm {
   value: any;
@@ -43,7 +45,6 @@ const ClaimForm = ({ value, price }: IClaimForm) => {
     const txb = new TransactionBlock();
     txb.setGasBudget(10000000);
 
-    //TODO: 게임 아이디로 gameObject 조회해서 타입 가져오기(pb에도 있긴 함)
     if (type === 'claim') {
       txb.moveCall({
         target: `${process.env.NEXT_PUBLIC_PACKAGE_ID}::betmeme::${type}`,
@@ -103,8 +104,6 @@ const ClaimForm = ({ value, price }: IClaimForm) => {
     return 'live';
   }, [objectData]);
 
-  nowStatus === 'expired' && console.log(nowStatus, content, objectData);
-
   const isPriceUp = useMemo(() => {
     if (nowStatus !== 'expired' && getPbData) {
       return Number(price) > Number(getPbData.startPrice);
@@ -142,6 +141,24 @@ const ClaimForm = ({ value, price }: IClaimForm) => {
     return precent;
   }, [isPriceUp, getPbData, price]);
 
+  const gameResult = useMemo(() => {
+    const result = Number(objectData?.lastPrice) / DECIMAL_UNIT - Number(objectData?.markedPrice) / DECIMAL_UNIT;
+
+    const a = () => {
+      if (result > 0) {
+        return true;
+      }
+
+      return false;
+    };
+
+    if (a() === content.fields.betUp) {
+      return 'win';
+    }
+
+    return 'lose';
+  }, [content, objectData]);
+
   return (
     <div key={value.data?.digest} className={styles.claimContainer}>
       <div className={styles.item}>
@@ -150,12 +167,17 @@ const ClaimForm = ({ value, price }: IClaimForm) => {
             {returnStatus}
             {nowStatus === 'expired' && (
               <>
-                <p>Winner Price</p>
-                <LottieContainer lottieData={TrophyLottie} className={styles.lottie} />
+                <p className={styles.expiredStatus}>
+                  <div>{gameResult === 'win' ? 'Winner' : 'Loser'}</div> Price
+                </p>
+                {gameResult === 'win' ? (
+                  <LottieContainer lottieData={TrophyLottie} className={styles.lottie} />
+                ) : (
+                  <LottieContainer lottieData={GiftLottie} className={styles.lottie} />
+                )}
               </>
             )}
           </div>
-          {/* 게임 정보가 있었으면 좋겠음, 게임아이디로 조회 하면 될 것 같은데 pb에 데이터들을 좀 넣어두면 도움이 되려나. */}
           <span className={styles.upBorder}></span>
           <span className={styles.downBorder}></span>
         </div>
@@ -166,7 +188,7 @@ const ClaimForm = ({ value, price }: IClaimForm) => {
               Bet Status<div>{content.fields.betUp ? <div>Up</div> : <div>Down</div>}</div>
             </div>
             <div className={styles.betList}>
-              Bet Amount<div>{content.fields.amount}</div>
+              Bet Amount<div>{numberWithCommas(Number(content.fields.amount) / DECIMAL_UNIT)} FUD</div>
             </div>
             {nowStatus !== 'expired' && (
               <>
@@ -190,8 +212,8 @@ const ClaimForm = ({ value, price }: IClaimForm) => {
             {/* 아직 진행중, 클레임, 챌린지 중에 한 상태만 있으면 됨 */}
             {nowStatus === 'expired' && (
               <>
-                <button onClick={() => claim('claim', value)}>claim</button>
-                <button onClick={() => claim('callenge', value)}>challenge</button>
+                {gameResult === 'win' && <button onClick={() => claim('claim', value)}>claim</button>}
+                {gameResult === 'lose' && <button onClick={() => claim('callenge', value)}>challenge</button>}
               </>
             )}
           </div>

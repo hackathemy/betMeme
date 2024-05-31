@@ -6,12 +6,13 @@ import { TransactionBlock } from '@mysten/sui.js/transactions';
 import styles from './index.module.scss';
 import { IBetMemesProps } from '@/types/bet-memes';
 import InputBox from '../Common/InputBox';
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import CloseIconSVG from '@/assets/icons/common/CloseIcon.svg';
 import { DECIMAL_UNIT, GAS_BUDGET } from '@/constant';
 import clsx from 'clsx';
 import IncreaseIconPNG from '@/assets/icons/common/IncreaseIcon.png';
 import DecreaseIconPNG from '@/assets/icons/common/DecreaseIcon.png';
+import { numberWithCommas } from '@/utils/formatNumber';
 
 interface IBetMemeModalProps {
   betValue: IBetMemesProps;
@@ -40,6 +41,12 @@ const BetMemeModal: React.FC<IBetMemeModalProps> = ({ betValue, betData, modalVi
   const coins = data?.data.filter((obj: any) => {
     return obj.data.type.indexOf(betValue.denom) >= 0;
   });
+
+  const betTargetPrice = useMemo(() => {
+    const content: any = coins?.[0].data?.content;
+
+    return content?.fields.balance || '0';
+  }, [coins]);
 
   const [betAmount, setBetAmount] = useState('');
 
@@ -73,8 +80,7 @@ const BetMemeModal: React.FC<IBetMemeModalProps> = ({ betValue, betData, modalVi
 
       const explorerLink = `https://testnet.suivision.xyz/txblock/${tx.digest}`;
       console.log(explorerLink);
-      onCloseModal(false);
-      setBetAmount('');
+      window.location.reload();
     } catch (e) {
       console.error(e);
     }
@@ -89,20 +95,30 @@ const BetMemeModal: React.FC<IBetMemeModalProps> = ({ betValue, betData, modalVi
         <div className={styles.container}>
           <div>
             <div className={styles.betStatus}>
-              Up<div className={styles.upAmount}>{betData.upAmount}</div>
+              Up<div className={styles.upAmount}>{numberWithCommas(Number(betData.upAmount) / DECIMAL_UNIT)} FUD</div>
             </div>
             <div className={styles.betStatus}>
-              Down<div className={styles.downAmount}>{betData.downAmount}</div>
+              Down
+              <div className={styles.downAmount}>{numberWithCommas(Number(betData.downAmount) / DECIMAL_UNIT)} FUD</div>
             </div>
             <div className={styles.amountInput}>
-              <div className={styles.amountPrice}>Balance: {123}</div>
-              <InputBox
-                title="Bet Amount"
-                placeholder="How much?"
-                value={betAmount}
-                onChange={(val) => setBetAmount(val.target.value || '')}
-                styled={styles.inputBox}
-              />
+              <div className={styles.amountPrice}>
+                Balance: {numberWithCommas(Number(betTargetPrice) / DECIMAL_UNIT)} FUD
+              </div>
+              <div className={styles.inputContainer}>
+                <input
+                  className={styles.inputBox}
+                  placeholder="How much?"
+                  value={betAmount}
+                  onChange={(val) => setBetAmount(val.target.value || '')}
+                />
+                <img
+                  src="https://assets.coingecko.com/coins/images/33610/standard/pug-head.png"
+                  alt="fud the pug"
+                  className={styles.tokenImg}
+                />
+                <div className={styles.amountText}>Amount</div>
+              </div>
             </div>
           </div>
           <div className={styles.buttonContainer}>

@@ -2,17 +2,20 @@ import { IBetMemesProps } from '@/types/bet-memes';
 import styles from './index.module.scss';
 import Button from '../Common/Button';
 import clsx from 'clsx';
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import BetMemeModal from '../BetMemeModal';
 import { useSuiClientQuery } from '@mysten/dapp-kit';
-import { RESULT_DURATION } from '@/constant';
+import { DECIMAL_UNIT, RESULT_DURATION } from '@/constant';
+import { numberWithCommas } from '@/utils/formatNumber';
 
 interface IBetCardProps {
   betValue: IBetMemesProps;
+  price: string;
 }
 
-const BetCard = ({ betValue }: IBetCardProps) => {
+const BetCard = ({ betValue, price }: IBetCardProps) => {
   const [modalView, setModalView] = useState(false);
+
   const { data, isPending, error } = useSuiClientQuery('getObject', {
     id: betValue.object,
     options: {
@@ -24,12 +27,23 @@ const BetCard = ({ betValue }: IBetCardProps) => {
     },
   });
 
+  const content: any = data?.data?.content;
+  const betData = content?.fields;
+
+  const pricePercentage = useMemo(() => {
+    if (betData) {
+      // const precent = (1 - Number(betData?.markedPrice) / DECIMAL_UNIT / Number(price)) * 100;
+      const precent = (1 - 0.0000002688 / Number(price)) * 100;
+      return precent;
+    }
+
+    return 0;
+  }, [betData, price]);
+
   if (isPending || error) return <div>Loading...</div>;
 
-  const content: any = data.data?.content;
-  const betData = content.fields;
   const date = new Date();
-  const lockedAmount = (Number(betData.upAmount) + Number(betData.downAmount)).toFixed(9);
+  const lockedAmount = ((Number(betData.upAmount) + Number(betData.downAmount)) / DECIMAL_UNIT).toFixed(6);
   let nowStatus = '';
   if (date.getTime() > Number(betData.startTime) + Number(betData.duration) + RESULT_DURATION) {
     nowStatus = 'expired';
@@ -73,16 +87,29 @@ const BetCard = ({ betValue }: IBetCardProps) => {
             <div className={styles.lockedContainer}>
               Price
               <div className={styles.betResult}>
-                Marked ${betData.markedPrice}
-                <div className={styles.betPercent}>Current $1.1</div>
+                {nowStatus === 'expired' ? (
+                  <>
+                    Marked ${(Number(betData?.markedPrice) / DECIMAL_UNIT).toFixed(9)}
+                    <div className={clsx(styles.betPercent, styles.endPercent)}>
+                      Last ${(Number(betData?.lastPrice) / DECIMAL_UNIT).toFixed(2)}
+                    </div>
+                  </>
+                ) : (
+                  <>
+                    ${price}
+                    <div className={clsx(styles.betPercent, pricePercentage > 0 && styles.isPlus)}>
+                      {pricePercentage?.toFixed(2)} %
+                    </div>
+                  </>
+                )}
               </div>
               <div className={styles.lockedAmount}>
                 Locked Pool:
-                <div>{lockedAmount}</div>
+                <div>{numberWithCommas(lockedAmount)} FUD</div>
               </div>
               <div className={styles.lockedAmount}>
                 Prize Pool:
-                <div>{betData.prizeAmount}</div>
+                <div>{numberWithCommas(Number(betData.prizeAmount) / DECIMAL_UNIT)} FUD</div>
               </div>
             </div>
           </div>
@@ -93,12 +120,10 @@ const BetCard = ({ betValue }: IBetCardProps) => {
           )}
           {nowStatus === 'next' && (
             <div className={styles.betStatus}>
-              <div className={clsx(styles.status, styles.up, betData.upAmount > betData.downAmount && styles.priceWin)}>
+              <div className={clsx(styles.status, styles.up, pricePercentage > 0 && styles.priceWin)}>
                 Up {betData.upAmount}
               </div>
-              <div
-                className={clsx(styles.status, styles.down, betData.upAmount <= betData.downAmount && styles.priceWin)}
-              >
+              <div className={clsx(styles.status, styles.down, pricePercentage < 0 && styles.priceWin)}>
                 Down {betData.downAmount}
               </div>
             </div>

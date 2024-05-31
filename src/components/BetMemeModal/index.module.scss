@@ -29,14 +29,11 @@
 }
 
 .amountInput {
-  position: relative;
-
   margin: 50px 0 20px;
 
   .amountPrice {
-    position: absolute;
-    top: 0;
-    right: 0;
+    display: flex;
+    justify-content: flex-end;
   }
 }
 
@@ -92,6 +89,33 @@
   }
 }
 
-.inputBox {
-  border: 1px solid rgba(255, 255, 255, 0.089);
+.inputContainer {
+  position: relative;
+
+  .inputBox {
+    background-color: rgba(41, 41, 41, 0.5);
+    width: -webkit-fill-available;
+    padding: 30px 10px 10px 60px;
+    border-radius: 10px;
+    border: 1px solid rgba(255, 255, 255, 0.089);
+    margin-top: 10px;
+  }
+
+  .tokenImg {
+    position: absolute;
+    top: 23px;
+    left: 13px;
+
+    width: 35px;
+    height: 35px;
+    border-radius: 50%;
+  }
+
+  .amountText {
+    position: absolute;
+    top: 20px;
+    left: 61px;
+
+    font-size: 13px;
+  }
 }
