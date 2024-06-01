@@ -27,6 +27,7 @@ export default function Claim() {
         <h1>My Bet</h1>
         <div className={styles.cardWrapper}>
           {data?.data
+            .filter((d: any) => d.data?.content?.fields?.amount > '0' && d)
             .filter((d) => d.data?.type?.includes('UserBet') && d)
             .map((d: any) => {
               return <ClaimForm key={d.data?.digest} value={d} />;
