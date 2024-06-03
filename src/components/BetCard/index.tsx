@@ -102,7 +102,9 @@ const BetCard = ({ betValue }: IBetCardProps) => {
 
   return (
     <div className={styles.cardContainer}>
-      {nowStatus === 'expired' && <div className={clsx(styles.backgroundEnd, styles[betData.win || 'down'])} />}
+      {nowStatus === 'expired' && (
+        <div className={clsx(styles.backgroundEnd, betData?.lastPrice - betData?.markedPrice > 0 && styles.up)} />
+      )}
       <div className={styles.cardContent}>
         <div>
           <div className={styles.liveHeader}>
